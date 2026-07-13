@@ -1,0 +1,106 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-white text-ink antialiased;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11", "ss01";
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  ::selection {
+    @apply bg-brand-red/15 text-brand-red-700;
+  }
+}
+
+@layer components {
+  /* Clean, low-elevation card surface */
+  .card {
+    @apply rounded-2xl border border-brand-blue/[0.07] bg-white shadow-card;
+  }
+  .card-glass {
+    @apply rounded-2xl border border-brand-blue/10 bg-white/70 shadow-soft backdrop-blur-xl;
+  }
+
+  /* Eyebrow label — restrained, modern */
+  .eyebrow {
+    @apply inline-flex items-center gap-2.5 text-[0.7rem] font-bold uppercase tracking-[0.2em] text-brand-red;
+  }
+  .eyebrow::before {
+    content: "";
+    @apply inline-block h-px w-6 bg-brand-red/45;
+  }
+  /* Eyebrow on coloured (red/blue) bands */
+  .eyebrow-on-color {
+    @apply inline-flex items-center gap-2.5 text-[0.7rem] font-bold uppercase tracking-[0.2em] text-white/90;
+  }
+  .eyebrow-on-color::before {
+    content: "";
+    @apply inline-block h-px w-6 bg-white/50;
+  }
+
+  /* Gradient text accent */
+  .text-gradient {
+    @apply bg-gradient-to-br from-brand-red via-brand-red-500 to-brand-red-400 bg-clip-text text-transparent;
+  }
+
+  /* Soft decorative blob (used sparingly) */
+  .blob {
+    position: absolute;
+    pointer-events: none;
+    border-radius: 9999px;
+    filter: blur(72px);
+    z-index: 0;
+  }
+
+  /* Display heading — tight, modern; colour inherited from context */
+  .display-hero {
+    @apply font-display font-bold tracking-[-0.02em];
+    line-height: 1.14;
+    text-wrap: balance;
+  }
+
+  .prose-content p {
+    @apply mb-4 leading-relaxed text-ink/75;
+  }
+
+  .rule {
+    height: 1px;
+    width: 100%;
+    background-image: linear-gradient(
+      to right,
+      transparent,
+      rgba(23, 50, 79, 0.12),
+      transparent
+    );
+  }
+
+  /* Premium brass hairline — elegant divider / accent */
+  .hairline-brass {
+    height: 1px;
+    background-image: linear-gradient(
+      to right,
+      transparent,
+      rgba(169, 127, 69, 0.55),
+      transparent
+    );
+  }
+
+  /* Refined uppercase overline in brass — luxury label */
+  .overline {
+    @apply inline-flex items-center gap-2.5 text-[0.68rem] font-semibold uppercase tracking-[0.28em] text-brass;
+  }
+}
+
+@layer utilities {
+  .container-tight {
+    @apply mx-auto w-full max-w-3xl px-6;
+  }
+  .text-balance {
+    text-wrap: balance;
+  }
+}

@@ -1,0 +1,247 @@
+// Milestone 2 data model for the Apt.Bed platform.
+// SQLite for a self-contained, runnable dev database. The schema avoids enums
+// and arrays so it ports cleanly to PostgreSQL/Neon in Milestone 3 (swap the
+// datasource provider + connection string).
+//
+// Money convention:
+//   • Catalogue prices (Variant.basePrice, Wood.priceDelta) are whole USD dollars
+//     — admin-friendly editing.
+//   • Order/Payment amounts are integer CENTS — precise for tax + freight math.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// PRODUCTION (Neon / PostgreSQL) — swap the datasource above for:
+//   datasource db {
+//     provider  = "postgresql"
+//     url       = env("DATABASE_URL")   // pooled (…-pooler…) connection
+//     directUrl = env("DIRECT_URL")     // direct connection, for migrations
+//   }
+// The models below are already Postgres-safe (no SQLite-only types), so the
+// only change needed is the datasource block + running `prisma migrate deploy`.
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String
+  role         String   @default("customer") // "customer" | "admin"
+  phone        String?
+  addressLine1 String?
+  city         String?
+  state        String?
+  zip          String?
+  createdAt    DateTime @default(now())
+  orders       Order[]
+  reviews      Review[]
+}
+
+model Product {
+  id           String @id @default(cuid())
+  slug         String @unique @default("apt-bed")
+  name         String
+  description  String
+  patent       String
+  availability String @default("made_to_order") // "made_to_order" | "in_stock"
+}
+
+model Size {
+  id         String    @id @default(cuid())
+  key        String    @unique // "twin" | "queen" | "king"
+  label      String
+  dimensions String
+  sortOrder  Int       @default(0)
+  variants   Variant[]
+}
+
+model Height {
+  id           String    @id @default(cuid())
+  key          String    @unique // "low" | "medium" | "high"
+  label        String
+  deckHeightFt Float
+  blurb        String
+  sortOrder    Int       @default(0)
+  variants     Variant[]
+}
+
+model Wood {
+  id         String  @id @default(cuid())
+  key        String  @unique // "oak" | "maple" | "walnut"
+  label      String
+  swatch     String
+  priceDelta Int     @default(0) // whole USD dollars
+  active     Boolean @default(true)
+  sortOrder  Int     @default(0)
+}
+
+model Variant {
+  id        String @id @default(cuid())
+  sizeId    String
+  heightId  String
+  basePrice Int // whole USD dollars
+  stock     Int    @default(0) // units on hand (used when availability = in_stock)
+  size      Size   @relation(fields: [sizeId], references: [id], onDelete: Cascade)
+  height    Height @relation(fields: [heightId], references: [id], onDelete: Cascade)
+
+  @@unique([sizeId, heightId])
+}
+
+/// Optional per-combination image override so admin can replace the composed
+/// preview with real photography without code. Falls back to the file convention.
+model ProductImage {
+  id       String @id @default(cuid())
+  sizeKey  String
+  heightKey String
+  woodKey  String
+  url      String
+
+  @@unique([sizeKey, heightKey, woodKey])
+}
+
+model CeilingRule {
+  id           String @id @default(cuid())
+  heightKey    String // "low" | "medium" | "high"
+  label        String
+  minCeilingFt Float
+  rationale    String
+  sortOrder    Int    @default(0)
+}
+
+model TaxRate {
+  id          String @id @default(cuid())
+  state       String @unique // 2-letter US state code, or "*" default
+  ratePercent Float
+}
+
+model Setting {
+  key   String @id
+  value String
+}
+
+model Order {
+  id            String   @id @default(cuid())
+  orderNumber   String   @unique
+  userId        String?
+  email         String
+  customerName  String
+  phone         String?
+  shipLine1     String
+  shipCity      String
+  shipState     String
+  shipZip       String
+  subtotal      Int // cents
+  tax           Int // cents
+  freight       Int // cents
+  total         Int // cents
+  currency      String   @default("usd")
+  status        String   @default("received") // received|in_production|ready_for_freight|shipped|delivered
+  paymentStatus String   @default("pending") // pending|paid|failed
+  stripeSessionId String?
+  createdAt     DateTime @default(now())
+
+  user    User?                @relation(fields: [userId], references: [id], onDelete: SetNull)
+  items   OrderItem[]
+  payments Payment[]
+  history OrderStatusHistory[]
+  reviews Review[]
+}
+
+model OrderItem {
+  id        String @id @default(cuid())
+  orderId   String
+  sizeKey   String
+  heightKey String
+  woodKey   String
+  label     String
+  unitPrice Int // cents
+  quantity  Int    @default(1)
+  status    String @default("received") // per-product lifecycle: received|in_production|ready_for_freight|shipped|delivered
+  order     Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+}
+
+model Payment {
+  id        String   @id @default(cuid())
+  orderId   String
+  provider  String   @default("stripe")
+  amount    Int // cents
+  status    String   @default("succeeded")
+  reference String?
+  createdAt DateTime @default(now())
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+}
+
+model OrderStatusHistory {
+  id        String   @id @default(cuid())
+  orderId   String
+  status    String
+  note      String?
+  createdAt DateTime @default(now())
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+}
+
+model Faq {
+  id        String  @id @default(cuid())
+  question  String
+  answer    String
+  sortOrder Int     @default(0)
+  published Boolean @default(true)
+}
+
+model Page {
+  id        String  @id @default(cuid())
+  slug      String  @unique
+  title     String
+  body      String
+  published Boolean @default(true)
+}
+
+model Announcement {
+  id        String   @id @default(cuid())
+  message   String
+  active    Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+/// Customer reviews. Submitted after an order is delivered, moderated by admin,
+/// and optionally featured on the About page.
+model Review {
+  id         String   @id @default(cuid())
+  userId     String?
+  orderId    String?
+  authorName String
+  rating     Int      @default(5) // 1..5
+  title      String?
+  body       String
+  status     String   @default("pending") // pending | approved | rejected
+  featured   Boolean  @default(false) // shown on the About page when true + approved
+  createdAt  DateTime @default(now())
+  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  order      Order?   @relation(fields: [orderId], references: [id], onDelete: SetNull)
+}
+
+/// Admin-managed site photography. `role` = "hero" (the first-screen image) or
+/// "gallery" (shown in the homepage gallery). Uploaded via the admin media page.
+model Photo {
+  id        String   @id @default(cuid())
+  url       String
+  alt       String?
+  role      String   @default("gallery") // "hero" | "gallery"
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+}
+
+model Video {
+  id        String   @id @default(cuid())
+  title     String
+  url       String
+  provider  String   @default("youtube")
+  sortOrder Int      @default(0)
+  published Boolean  @default(true)
+  createdAt DateTime @default(now())
+}

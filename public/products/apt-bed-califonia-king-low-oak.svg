@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 460" width="560" height="460" role="img" aria-label="Apt.Bed — Califonia King · Low · Oak">
+  <rect width="560" height="460" fill="#F7F2EA"/>
+  <rect width="560" height="380" fill="#EFE7DA"/>
+  <rect y="380" width="560" height="80" fill="#E4D8C6"/>
+  <ellipse cx="280" cy="392" rx="198" ry="14" fill="#000000" opacity="0.06"/>
+  <rect x="52" y="70" width="60" height="78" rx="4" fill="#FFFFFF" stroke="#1E3A5F" stroke-opacity="0.12"/>
+  <path d="M60 130 L78 104 L92 122 L104 96 L104 140 L60 140 Z" fill="#6E9CC4" opacity="0.35"/>
+  <rect x="118" y="146" width="14" height="234" fill="#7d6442"/>
+  <rect x="428" y="146" width="14" height="234" fill="#7d6442"/>
+  <rect x="132" y="152" width="296" height="228" fill="#C9A26B"/>
+  <rect x="132" y="152" width="96" height="228" fill="#b18f5e" stroke="#4A3521" stroke-opacity="0.25"/>
+  <rect x="150" y="172" width="10" height="114.0" rx="4" fill="#d5b68c"/>
+  <rect x="196" y="172" width="10" height="91.2" rx="4" fill="#d5b68c"/>
+  <rect x="228" y="152" width="118" height="228" fill="#C9A26B" stroke="#4A3521" stroke-opacity="0.2"/>
+  <rect x="236" y="248" width="102" height="12" fill="#7d6442"/>
+  <circle cx="287" cy="207" r="10" fill="#6E9CC4" opacity="0.6"/>
+  <rect x="346" y="158.0" width="80" height="48.0" rx="4" fill="#d5b68c" stroke="#4A3521" stroke-opacity="0.2"/><circle cx="386" cy="182.0" r="4" fill="#7d6442"/><rect x="346" y="212.0" width="80" height="48.0" rx="4" fill="#d5b68c" stroke="#4A3521" stroke-opacity="0.2"/><circle cx="386" cy="236.0" r="4" fill="#7d6442"/><rect x="346" y="266.0" width="80" height="48.0" rx="4" fill="#d5b68c" stroke="#4A3521" stroke-opacity="0.2"/><circle cx="386" cy="290.0" r="4" fill="#7d6442"/><rect x="346" y="320.0" width="80" height="48.0" rx="4" fill="#d5b68c" stroke="#4A3521" stroke-opacity="0.2"/><circle cx="386" cy="344.0" r="4" fill="#7d6442"/>
+  <rect x="110" y="134" width="340" height="12" fill="#7d6442"/>
+  <rect x="120" y="100" width="320" height="34" rx="8" fill="#FFFFFF" stroke="#4A3521" stroke-opacity="0.12"/>
+  <rect x="120" y="122" width="320" height="12" rx="6" fill="#6E9CC4" opacity="0.55"/>
+  <rect x="132" y="106" width="60" height="20" rx="8" fill="#D25A48" opacity="0.9"/>
+  <text x="280" y="436" text-anchor="middle" font-family="Georgia, serif" font-size="18" font-weight="600" fill="#1E3A5F">Apt.Bed — Califonia King · Low · Oak</text>
+</svg>

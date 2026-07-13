@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 460" width="560" height="460" role="img" aria-label="Apt.Bed Twin / Twin Long High in Maple">
+  <!-- constant scene -->
+  <rect width="560" height="460" fill="#F7F2EA"/>
+  <rect x="0" y="0" width="560" height="380" fill="#EFE7DA"/>
+  <rect x="0" y="380" width="560" height="80" fill="#E4D8C6"/>
+  <ellipse cx="280" cy="392" rx="154" ry="14" fill="#000000" opacity="0.06"/>
+  <!-- wall art -->
+  <rect x="52" y="70" width="60" height="78" rx="4" fill="#FFFFFF" stroke="#1E3A5F" stroke-opacity="0.12"/>
+  <path d="M60 130 L78 104 L92 122 L104 96 L104 140 L60 140 Z" fill="#6E9CC4" opacity="0.35"/>
+  <!-- potted plant -->
+  <g transform="translate(490, 302)">
+    <path d="M20 78 C6 60 6 40 16 24" fill="none" stroke="#8FA98C" stroke-width="4" stroke-linecap="round"/>
+    <path d="M20 78 C34 58 36 40 30 22" fill="none" stroke="#8FA98C" stroke-width="4" stroke-linecap="round"/>
+    <path d="M20 78 C20 56 22 40 23 26" fill="none" stroke="#8FA98C" stroke-width="4" stroke-linecap="round"/>
+    <ellipse cx="16" cy="24" rx="7" ry="12" fill="#8FA98C"/>
+    <ellipse cx="30" cy="22" rx="7" ry="12" fill="#8FA98C"/>
+    <ellipse cx="23" cy="16" rx="6" ry="11" fill="#8FA98C"/>
+    <path d="M8 78 L32 78 L29 98 L11 98 Z" fill="#C98B6B"/>
+  </g>
+
+  <!-- vertical posts (wood) -->
+  <rect x="160" y="79" width="14" height="301" fill="#A9814F"/>
+  <rect x="386" y="79" width="14" height="301" fill="#A9814F"/>
+
+  <!-- storage bay backer (wood) -->
+  <rect x="170" y="125" width="220" height="255" fill="#F0DEB6"/>
+
+  <!-- closet (wood) -->
+  <rect x="170" y="125" width="70.4" height="255" fill="#E0C48F" stroke="#6B4E2E" stroke-opacity="0.25"/>
+  <line x1="205.2" y1="133" x2="205.2" y2="372" stroke="#6B4E2E" stroke-opacity="0.2"/>
+  <line x1="182" y1="145" x2="228.4" y2="145" stroke="#A9814F" stroke-width="3"/>
+  <rect x="190" y="147" width="10" height="127.5" rx="4" fill="#C6A06C"/>
+  <rect x="210.4" y="147" width="10" height="102" rx="4" fill="#D3B583"/>
+
+  <!-- desk (wood) -->
+  <rect x="240.4" y="125" width="88" height="255" fill="#F0DEB6" stroke="#6B4E2E" stroke-opacity="0.2"/>
+  <rect x="248.4" y="232.1" width="72" height="12" fill="#C6A06C"/>
+  <rect x="262.4" y="244.1" width="8" height="102" fill="#A9814F"/>
+  <rect x="298.4" y="244.1" width="8" height="102" fill="#A9814F"/>
+  <circle cx="284.4" cy="186.2" r="10" fill="#6E9CC4" opacity="0.65"/>
+
+  <!-- chest of drawers (wood) -->
+  <rect x="328.4" y="125" width="61.599999999999994" height="255" fill="#E0C48F" stroke="#6B4E2E" stroke-opacity="0.25"/>
+  <rect x="334.4" y="129" width="49.599999999999994" height="55.75" rx="4" fill="#F0DEB6" stroke="#6B4E2E" stroke-opacity="0.2"/><circle cx="359.2" cy="156.875" r="4" fill="#A9814F"/>
+  <rect x="334.4" y="192.75" width="49.599999999999994" height="55.75" rx="4" fill="#F0DEB6" stroke="#6B4E2E" stroke-opacity="0.2"/><circle cx="359.2" cy="220.625" r="4" fill="#A9814F"/>
+  <rect x="334.4" y="256.5" width="49.599999999999994" height="55.75" rx="4" fill="#F0DEB6" stroke="#6B4E2E" stroke-opacity="0.2"/><circle cx="359.2" cy="284.375" r="4" fill="#A9814F"/>
+  <rect x="334.4" y="320.25" width="49.599999999999994" height="55.75" rx="4" fill="#F0DEB6" stroke="#6B4E2E" stroke-opacity="0.2"/><circle cx="359.2" cy="348.125" r="4" fill="#A9814F"/>
+
+  <!-- bed platform base (wood) -->
+  <rect x="154" y="113" width="252" height="12" fill="#A9814F"/>
+  <!-- mattress (constant) -->
+  <rect x="164" y="79" width="232" height="34" rx="8" fill="#FFFFFF" stroke="#6B4E2E" stroke-opacity="0.12"/>
+  <rect x="164" y="101" width="232" height="12" rx="6" fill="#6E9CC4" opacity="0.55"/>
+  <!-- pillow (constant accent) -->
+  <rect x="176" y="85" width="60" height="20" rx="8" fill="#D25A48" opacity="0.9"/>
+  <!-- guard rail (wood) -->
+  <line x1="380" y1="59" x2="380" y2="79" stroke="#A9814F" stroke-width="5" stroke-linecap="round"/>
+  <line x1="330" y1="59" x2="330" y2="79" stroke="#A9814F" stroke-width="5" stroke-linecap="round"/>
+  <line x1="330" y1="59" x2="380" y2="59" stroke="#A9814F" stroke-width="5" stroke-linecap="round"/>
+
+  <!-- ladder (wood) -->
+  <line x1="174" y1="79" x2="174" y2="380" stroke="#C6A06C" stroke-width="6"/>
+  <line x1="200" y1="79" x2="200" y2="380" stroke="#C6A06C" stroke-width="6"/>
+  <line x1="174" y1="139.2" x2="200" y2="139.2" stroke="#A9814F" stroke-width="5" stroke-linecap="round"/>
+  <line x1="174" y1="205.42000000000002" x2="200" y2="205.42000000000002" stroke="#A9814F" stroke-width="5" stroke-linecap="round"/>
+  <line x1="174" y1="271.64" x2="200" y2="271.64" stroke="#A9814F" stroke-width="5" stroke-linecap="round"/>
+  <line x1="174" y1="337.86" x2="200" y2="337.86" stroke="#A9814F" stroke-width="5" stroke-linecap="round"/>
+</svg>
