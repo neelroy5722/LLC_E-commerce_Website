@@ -10,6 +10,7 @@ import { setSetting } from "@/lib/settings";
 import { dollarsToCents } from "@/lib/money";
 import { productPlaceholderSvg } from "@/lib/placeholder";
 import { variantImagePath } from "@/lib/catalog";
+import { deleteMedia } from "@/lib/storage";
 
 async function assertAdmin() {
   const su = await getSessionUser();
@@ -139,7 +140,7 @@ export async function deleteWoodAction(formData: FormData) {
   const id = String(formData.get("id"));
   const count = await prisma.wood.count();
   if (count <= 1) return; // keep at least one finish available
-  await prisma.wood.delete({ where: { id } });
+  await prisma.wood.deleteMany({ where: { id } });
   revalidateStore();
   revalidatePath("/admin/products");
 }
@@ -170,7 +171,7 @@ export async function deleteSizeAction(formData: FormData) {
   const id = String(formData.get("id"));
   const count = await prisma.size.count();
   if (count <= 1) return; // keep at least one size
-  await prisma.size.delete({ where: { id } }); // cascades its variants
+  await prisma.size.deleteMany({ where: { id } }); // cascades its variants
   revalidateStore();
   revalidatePath("/admin/products");
 }
@@ -248,7 +249,7 @@ export async function upsertFaqAction(formData: FormData) {
 
 export async function deleteFaqAction(formData: FormData) {
   await assertAdmin();
-  await prisma.faq.delete({ where: { id: String(formData.get("id")) } });
+  await prisma.faq.deleteMany({ where: { id: String(formData.get("id")) } });
   revalidatePath("/admin/content");
   revalidatePath("/faq");
 }
@@ -280,14 +281,24 @@ export async function addVideoAction(formData: FormData) {
 
 export async function deleteVideoAction(formData: FormData) {
   await assertAdmin();
-  await prisma.video.delete({ where: { id: String(formData.get("id")) } });
+  const id = String(formData.get("id"));
+  // Capture the URL before removing the row so we can clean up its stored file.
+  const video = await prisma.video.findUnique({ where: { id } });
+  // deleteMany is idempotent: a double-click or an already-removed row deletes
+  // 0 records instead of throwing P2025 ("Record to delete does not exist").
+  await prisma.video.deleteMany({ where: { id } });
+  // Uploaded files get removed from storage; external embeds are a no-op.
+  if (video) await deleteMedia(video.url);
   revalidatePath("/admin/videos");
   revalidatePath("/assembly");
 }
 
 export async function deletePhotoAction(formData: FormData) {
   await assertAdmin();
-  await prisma.photo.delete({ where: { id: String(formData.get("id")) } });
+  const id = String(formData.get("id"));
+  const photo = await prisma.photo.findUnique({ where: { id } });
+  await prisma.photo.deleteMany({ where: { id } });
+  if (photo) await deleteMedia(photo.url);
   revalidatePath("/admin/videos");
   revalidatePath("/");
 }
@@ -396,7 +407,7 @@ export async function toggleReviewFeaturedAction(formData: FormData) {
 
 export async function deleteReviewAction(formData: FormData) {
   await assertAdmin();
-  await prisma.review.delete({ where: { id: String(formData.get("id")) } });
+  await prisma.review.deleteMany({ where: { id: String(formData.get("id")) } });
   revalidateReviews();
 }
 
@@ -408,6 +419,6 @@ export async function deleteCustomerAction(formData: FormData) {
   // Only allowed when the customer has no undelivered orders.
   const hasOpen = user.orders.some((o) => o.status !== "delivered");
   if (hasOpen) return;
-  await prisma.user.delete({ where: { id } });
+  await prisma.user.deleteMany({ where: { id } });
   revalidatePath("/admin/customers");
 }

@@ -4,7 +4,7 @@ Everything the store can be run with, no code required. Sign in at
 `/login` with an **admin** account; you land on the **Admin dashboard**.
 
 Default seeded admin (change the password after first login):
-`admin@victorymartin.com` / `admin1234`
+`admin@apartmentloftbed.com` / `admin1234`
 
 ---
 

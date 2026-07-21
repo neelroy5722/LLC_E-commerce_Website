@@ -1,12 +1,12 @@
 # Victory Martin — Apt.Bed E-commerce Platform
 
-Frontend foundation for **Victory Martin LLC**'s Apt.Bed store — one patented
-furniture unit (Bed + Closet + Desk + Chest + Bedside table) sold in configurable
-sizes, heights, and finishes.
+**Victory Martin LLC**'s store for the Apt.Bed — one patented furniture unit
+(Bed + Closet + Desk + Chest + Bedside table) sold in configurable sizes,
+heights, and finishes.
 
-This repository currently covers **Milestone 1 — UI/UX, Branding & Frontend
-Foundation**: a complete, responsive, clickable website with the two signature
-interactive tools working on the frontend. No real payments or persistence yet.
+Status: **Milestone 1 (UI/UX & branding) + Milestone 2 (Backend, Payments &
+Admin) complete.** The site is a working transactional business system —
+accounts, checkout, orders, and a data-driven admin.
 
 ## Tech stack
 
@@ -14,70 +14,77 @@ interactive tools working on the frontend. No real payments or persistence yet.
 |---|---|
 | Framework | Next.js 14 (App Router) |
 | Language | TypeScript |
-| Styling | Tailwind CSS |
-| Icons | lucide-react |
-| Fonts | Inter (sans) + Fraunces (display) via `next/font` |
-
-The stack is aligned with the recommended Milestone 2/3 additions (Prisma +
-Postgres/Neon, NextAuth, Stripe, Cloudinary) — those plug into the data layer
-below without reworking the UI.
+| Styling | Tailwind CSS (dark theme) |
+| Database | Prisma ORM · SQLite in dev (Postgres/Neon-portable) |
+| Auth | NextAuth (Auth.js) — credentials + customer/admin roles |
+| Payments | Stripe Checkout (test mode) with a built-in mock fallback |
+| Tax | Data-driven US state rates (Stripe Tax-ready) |
+| Icons / Fonts | lucide-react · Inter + Fraunces |
 
 ## Getting started
 
 ```bash
-npm install
-npm run dev      # http://localhost:3000
-npm run build    # production build
-npm start        # serve the production build
+npm install            # also runs `prisma generate`
+npm run db:reset       # create + seed the SQLite database
+npm run dev            # http://localhost:3000
 ```
 
-Extra scripts:
+`npm run build` runs `prisma generate && next build`. Other scripts:
 
 ```bash
-node scripts/generate-product-images.mjs   # regenerate the 12 variant images
-node scripts/sanity-check.mjs              # verify pricing + ceiling logic
+npm run db:push        # sync schema to the database
+npm run db:seed        # seed catalogue, content, tax, sample orders
+node scripts/generate-product-images.mjs   # regenerate the 27 variant images
 ```
 
-## What's included (Milestone 1)
+### Demo logins (from the seed)
 
-- **Branding** — eagle-forms-a-“V” logo ([components/brand/Logo.tsx](components/brand/Logo.tsx)),
-  Soft Red / White / Blue color system, and typography defined in
-  [tailwind.config.ts](tailwind.config.ts).
-- **Marketing pages** — Home, Product, About, FAQ, Contact (plus Privacy, Terms,
-  Shipping, Assembly), fully responsive and mobile-first.
-- **Product Configurator** ([components/product/Configurator.tsx](components/product/Configurator.tsx))
-  — Size → Height → Wood, with the preview image swapping and the price updating
-  live for every combination.
-- **Ceiling-Height Recommendation Tool** ([components/product/CeilingTool.tsx](components/product/CeilingTool.tsx))
-  — enter a ceiling height, get a recommended bed height. Thresholds are
-  data-driven ([lib/ceiling.ts](lib/ceiling.ts)) so they can be tuned later.
-- **Composed product imagery** — 12 variant images generated from one parametric
-  base model into `public/products/`.
-- **Static shells** — Customer Account (`/account`) and Admin Panel (`/admin`),
-  UI only.
+- **Customer** — `john.r@email.com` / `password`
+- **Admin** — `admin@apartmentloftbed.com` / `admin1234`
 
-## Architecture notes
+## Environment (`.env`)
 
-The custom-engineering focus areas are isolated in `lib/` as the single source of
-truth, so Milestone 2 can move them behind a database/API without touching the UI:
+Everything runs offline out of the box. Optional integrations:
 
-- [lib/products.ts](lib/products.ts) — sizes, heights, woods, the price matrix, and
-  variant → price/image resolution. Four selectable sizes × three heights yield the
-  nine distinct base prices (Twin & Twin Long share a footprint tier).
-- [lib/ceiling.ts](lib/ceiling.ts) — data-driven recommendation rules.
-- [lib/site.ts](lib/site.ts) — site config, nav, FAQ, order-lifecycle statuses.
-- [lib/mock.ts](lib/mock.ts) — placeholder orders/customers for the account & admin
-  shells (replaced by real queries in Milestone 2).
+- `STRIPE_SECRET_KEY` / `STRIPE_WEBHOOK_SECRET` — enable **real Stripe Checkout**
+  (test mode). Left blank, checkout uses a mock that creates a paid order so the
+  flow is demonstrable end-to-end. Toggle `NEXT_PUBLIC_STRIPE_ENABLED`.
+- `RESEND_API_KEY` / `RESEND_FROM` — send order-confirmation and password-reset
+  emails via [Resend](https://resend.com). Left blank, emails are logged
+  to the server console.
+- `DATABASE_URL` — SQLite by default; point at Postgres/Neon for production
+  (change the `provider` in `prisma/schema.prisma` to `postgresql`).
 
-### Routing
+## Milestone 2 — what's implemented
 
-- `app/(marketing)/` — public site + customer account, wrapped in the site
-  header/footer.
-- `app/admin/` — admin panel with its own chrome (no marketing header/footer).
+- **Database & API** — Users, Product/Sizes/Heights/Woods/Variants, Orders,
+  Order Items, Payments, **Order status history**, FAQs, Pages, Announcements,
+  Videos, Tax rates, Settings. See [prisma/schema.prisma](prisma/schema.prisma).
+- **Auth** — register/login, hashed passwords, JWT sessions, `customer` vs
+  `admin` roles, route guards ([lib/session.ts](lib/session.ts)).
+- **Data-driven catalogue** — the product page, configurator, and price matrix
+  read prices/images/availability from the DB, so **admin edits change the
+  storefront without code** ([lib/catalog.ts](lib/catalog.ts)).
+- **Checkout** — configure → shipping → **live sales tax by state** + flat
+  freight placeholder → Stripe (or mock) → order creation + confirmation email
+  ([app/api/checkout/route.ts](app/api/checkout/route.ts), [lib/pricing.ts](lib/pricing.ts)).
+- **Customer dashboard** — real order history, live status tracking
+  (Order Received → In Production → Ready for Freight → Shipped → Delivered),
+  editable profile & address.
+- **Admin dashboard** — manage prices, wood options, images, availability;
+  advance order status (visible to the customer); customers; FAQs &
+  announcements; assembly videos; reports (sales, revenue, best-selling size,
+  open vs. completed) — all backed by real data.
 
-## Roadmap
+### Custom-engineering focus areas
 
-- **Milestone 2** — Database & API, auth, Stripe checkout + tax, customer & admin
-  dashboards wired to real data.
-- **Milestone 3** — Freight shipping integration, live assembly videos, hosting on
-  `victorymartin.com`, and handover.
+- **Configurator** — DB-backed variant table (selection → price + image), admin-editable.
+- **Ceiling calculator** — thresholds stored in the DB, tunable without redeploy.
+- **Order lifecycle** — status state machine with a `OrderStatusHistory` table, surfaced to admin and customer.
+- **Freight** — flat-rate abstraction now; live carrier rates plug in for Milestone 3.
+
+## Roadmap — Milestone 3
+
+Live freight rates, admin/Cloudinary video uploads, production hosting on
+`apartmentloftbed.com` (VPS + self-hosted PostgreSQL + live Stripe keys), full QA,
+and handover. See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).

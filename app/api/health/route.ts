@@ -4,7 +4,7 @@ import { prisma } from "@/lib/db";
 export const dynamic = "force-dynamic";
 
 /**
- * Health / readiness probe for the host (Railway) and uptime monitoring.
+ * Health / readiness probe for the host (VPS) and uptime monitoring.
  * Verifies DB connectivity and reports which production integrations are wired
  * (booleans only — never leaks secret values).
  */
@@ -27,7 +27,7 @@ export async function GET() {
     integrations: {
       stripe: Boolean(process.env.STRIPE_SECRET_KEY),
       stripeWebhook: Boolean(process.env.STRIPE_WEBHOOK_SECRET),
-      email: Boolean(process.env.MAILGUN_API_KEY && process.env.MAILGUN_DOMAIN),
+      email: Boolean(process.env.RESEND_API_KEY),
       media: mediaConfigured ? "cloudinary" : "local",
       freight: (process.env.FREIGHT_PROVIDER || "flat").toLowerCase(),
     },

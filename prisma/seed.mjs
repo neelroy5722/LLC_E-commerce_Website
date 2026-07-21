@@ -169,10 +169,11 @@ async function main() {
   const adminPass = await bcrypt.hash("admin1234", 10);
   await prisma.user.create({
     data: {
-      email: "admin@victorymartin.com",
+      email: "admin@apartmentloftbed.com",
       passwordHash: adminPass,
       name: "Victory Martin Admin",
       role: "admin",
+      emailVerifiedAt: new Date(),
     },
   });
 
@@ -183,6 +184,7 @@ async function main() {
       passwordHash: custPass,
       name: "John Rivera",
       role: "customer",
+      emailVerifiedAt: new Date(),
       phone: "(555) 204-1180",
       addressLine1: "418 Maple Street, Apt 3B",
       city: "Austin",
@@ -358,7 +360,7 @@ async function main() {
   });
 
   console.log("Seed complete ✓");
-  console.log("  Admin:    admin@victorymartin.com / admin1234");
+  console.log("  Admin:    admin@apartmentloftbed.com / admin1234");
   console.log("  Customer: john.r@email.com / password");
 }
 

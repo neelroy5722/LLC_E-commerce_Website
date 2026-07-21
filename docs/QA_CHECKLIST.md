@@ -26,7 +26,7 @@ and in Chrome, Safari, and Firefox.
 - [ ] Sales tax matches the shipping state; a 0%-tax state (e.g. OR) shows no tax line.
 - [ ] Flat freight is included in the total.
 - [ ] Stripe test card `4242 4242 4242 4242` completes → success page → order is **paid**.
-- [ ] Confirmation email is received (Mailgun) with the itemized order.
+- [ ] Confirmation email is received (Resend) with the itemized order.
 - [ ] Order appears in the **customer** dashboard and the **admin** dashboard.
 
 ## Order lifecycle

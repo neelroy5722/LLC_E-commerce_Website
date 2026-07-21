@@ -24,6 +24,10 @@ export const authOptions: NextAuthOptions = {
         const ok = await bcrypt.compare(password, user.passwordHash);
         if (!ok) return null;
 
+        // Require a verified email before allowing sign-in. The thrown message
+        // is surfaced to the login page so it can offer to resend the link.
+        if (!user.emailVerifiedAt) throw new Error("EMAIL_NOT_VERIFIED");
+
         return { id: user.id, email: user.email, name: user.name, role: user.role };
       },
     }),

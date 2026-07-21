@@ -3,7 +3,7 @@
 
 **Product:** Apt.Bed — one patented, configurable furniture unit (Bed + Closet + Desk + Chest + Bedside table). US Patent #11,553,800.
 **Variants:** 3 sizes (Twin/Twin Long, Queen, King) × 3 heights = 9 variations; wood finishes added later.
-**Domain:** victorymartin.com
+**Domain:** apartmentloftbed.com
 
 ---
 
@@ -58,12 +58,12 @@
 ### Deliverables
 - **Freight shipping:** Integration point built with a fixed/flat freight price initially; architected to plug in live freight rates once the carrier is finalized.
 - **Assembly video section:** Live and admin-uploadable.
-- **Hosting & domain:** Production hosting setup and migration of **victorymartin.com** (current host is unavailable), SSL, environment config for Stripe live keys.
+- **Hosting & domain:** Production hosting setup and migration of **apartmentloftbed.com** (current host is unavailable), SSL, environment config for Stripe live keys.
 - **QA:** Full testing pass — cross-browser, mobile, checkout, tax, order lifecycle, security basics.
 - **Handover:** Source code, documentation, admin training session, and credentials transfer.
 
 ### Acceptance Criteria
-- Site is live on victorymartin.com with a real Stripe payment path.
+- Site is live on apartmentloftbed.com with a real Stripe payment path.
 - Client can independently place a test order, manage it in admin, and upload a video after a short training session.
 
 ---

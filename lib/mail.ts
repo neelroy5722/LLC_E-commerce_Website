@@ -13,11 +13,10 @@ interface OrderEmailData {
 }
 
 /**
- * Sends an order confirmation via Mailgun (https://mailgun.com).
- * Set MAILGUN_API_KEY + MAILGUN_DOMAIN (and optionally MAILGUN_FROM / MAILGUN_API_BASE
- * for the EU region) in .env. In dev without a key the message is logged to the
- * server console so the flow stays verifiable. Uses the Mailgun HTTP API
- * directly via fetch — no extra dependency required.
+ * Sends an order confirmation via Resend (https://resend.com).
+ * Set RESEND_API_KEY (and optionally RESEND_FROM) in .env. In dev without a key
+ * the message is logged to the server console so the flow stays verifiable.
+ * Uses the Resend HTTP API directly via fetch — no extra dependency required.
  */
 export async function sendOrderConfirmation(data: OrderEmailData): Promise<void> {
   const subject = `Your Apt.Bed order ${data.orderNumber}`;
@@ -42,45 +41,108 @@ export async function sendOrderConfirmation(data: OrderEmailData): Promise<void>
 
   const html = renderHtml(data, itemLines);
 
-  const apiKey = process.env.MAILGUN_API_KEY;
-  const domain = process.env.MAILGUN_DOMAIN;
-  const base = process.env.MAILGUN_API_BASE || "https://api.mailgun.net";
-  const from = process.env.MAILGUN_FROM || `Victory Martin <orders@${domain ?? "victorymartin.com"}>`;
+  await deliverMail({ to: data.email, subject, text, html, logLabel: `order ${data.orderNumber}` });
+}
 
-  if (!apiKey || !domain) {
+/**
+ * Sends a password-reset link via Resend. `resetUrl` embeds the single-use
+ * token; the caller is responsible for generating + storing it (hashed).
+ * Without a Resend key the message is logged to the console like other emails.
+ */
+export async function sendPasswordReset(data: { email: string; name: string; resetUrl: string }): Promise<void> {
+  const subject = "Reset your Apt.Bed password";
+
+  const text = [
+    `Hi ${data.name},`,
+    ``,
+    `We received a request to reset the password for your Apt.Bed account.`,
+    `Open the link below to choose a new password. It expires in 1 hour and can be used once.`,
+    ``,
+    data.resetUrl,
+    ``,
+    `If you didn't request this, you can safely ignore this email — your password won't change.`,
+    ``,
+    `— Victory Martin`,
+  ].join("\n");
+
+  const html = renderResetHtml(data);
+
+  await deliverMail({ to: data.email, subject, text, html, logLabel: `password reset for ${data.email}` });
+}
+
+/**
+ * Sends an email-address verification link for a newly-registered account.
+ * `verifyUrl` embeds the single-use token; without a Resend key the message is
+ * logged to the console like other emails.
+ */
+export async function sendEmailVerification(data: { email: string; name: string; verifyUrl: string }): Promise<void> {
+  const subject = "Verify your Apt.Bed email";
+
+  const text = [
+    `Hi ${data.name},`,
+    ``,
+    `Thanks for creating an Apt.Bed account. Please confirm your email address by`,
+    `opening the link below. It expires in 24 hours.`,
+    ``,
+    data.verifyUrl,
+    ``,
+    `If you didn't create this account, you can safely ignore this email.`,
+    ``,
+    `— Victory Martin`,
+  ].join("\n");
+
+  const html = renderVerifyHtml(data);
+
+  await deliverMail({ to: data.email, subject, text, html, logLabel: `email verification for ${data.email}` });
+}
+
+/**
+ * Shared Resend delivery. Sends via the Resend HTTP API when RESEND_API_KEY is
+ * set; otherwise logs to the server console so every email flow stays verifiable
+ * in dev. Uses fetch — no extra dependency.
+ */
+async function deliverMail(opts: {
+  to: string;
+  subject: string;
+  text: string;
+  html: string;
+  logLabel: string;
+}): Promise<void> {
+  const apiKey = process.env.RESEND_API_KEY;
+  const from = process.env.RESEND_FROM || "Victory Martin <orders@apartmentloftbed.com>";
+
+  if (!apiKey) {
     console.log(
-      `\n──────── ORDER CONFIRMATION EMAIL (dev — set MAILGUN_API_KEY + MAILGUN_DOMAIN to send) ────────\nFrom: ${from}\nTo: ${data.email}\nSubject: ${subject}\n\n${text}\n────────────────────────────────────────────────\n`
+      `\n──────── EMAIL (${opts.logLabel}) (dev — set RESEND_API_KEY to send) ────────\nFrom: ${from}\nTo: ${opts.to}\nSubject: ${opts.subject}\n\n${opts.text}\n────────────────────────────────────────────────\n`
     );
     return;
   }
 
   try {
-    const body = new URLSearchParams();
-    body.set("from", from);
-    body.set("to", data.email);
-    body.set("subject", subject);
-    body.set("text", text);
-    body.set("html", html);
-
-    // Mailgun uses HTTP Basic auth: username "api", password = the API key.
-    const auth = Buffer.from(`api:${apiKey}`).toString("base64");
-    const res = await fetch(`${base}/v3/${domain}/messages`, {
+    // Resend uses Bearer auth and a JSON body.
+    const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
-        Authorization: `Basic ${auth}`,
-        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
       },
-      body: body.toString(),
+      body: JSON.stringify({
+        from,
+        to: [opts.to],
+        subject: opts.subject,
+        text: opts.text,
+        html: opts.html,
+      }),
     });
     if (!res.ok) {
       const detail = await res.text().catch(() => "");
-      console.error(`[mailgun] send failed (${res.status}) for order ${data.orderNumber}: ${detail}`);
+      console.error(`[resend] send failed (${res.status}) for ${opts.logLabel}: ${detail}`);
     } else {
       const json = (await res.json().catch(() => ({}))) as { id?: string };
-      console.log(`[mailgun] sent order ${data.orderNumber} to ${data.email}${json.id ? ` (id ${json.id})` : ""}`);
+      console.log(`[resend] sent ${opts.logLabel} to ${opts.to}${json.id ? ` (id ${json.id})` : ""}`);
     }
   } catch (err) {
-    console.error(`[mailgun] error sending order ${data.orderNumber}:`, err);
+    console.error(`[resend] error sending ${opts.logLabel}:`, err);
   }
 }
 
@@ -108,7 +170,57 @@ function renderHtml(data: OrderEmailData, itemLines: string[]): string {
             ${totalRow("Total", formatCents(data.total), true)}
           </table>
         </td></tr>
-        <tr><td style="padding:16px 28px;background:#F7F2EA;color:#6b7280;font-size:12px">Handcrafted to order in South Carolina, USA · victorymartin.com</td></tr>
+        <tr><td style="padding:16px 28px;background:#F7F2EA;color:#6b7280;font-size:12px">Handcrafted to order in South Carolina, USA · apartmentloftbed.com</td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body></html>`;
+}
+
+function renderResetHtml(data: { name: string; resetUrl: string }): string {
+  return `<!doctype html><html><body style="margin:0;background:#F4EDE3;font-family:Helvetica,Arial,sans-serif">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F4EDE3;padding:24px 0">
+    <tr><td align="center">
+      <table role="presentation" width="520" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:14px;overflow:hidden;max-width:520px;width:100%">
+        <tr><td style="background:#1E3A5F;padding:20px 28px;color:#fff;font-size:18px;font-weight:700">Victory Martin — Apt.Bed</td></tr>
+        <tr><td style="padding:28px">
+          <p style="margin:0 0 8px;color:#0C1826;font-size:16px">Hi ${escapeHtml(data.name)},</p>
+          <p style="margin:0 0 20px;color:#374151;font-size:14px;line-height:1.6">We received a request to reset your Apt.Bed account password. Click the button below to choose a new one. This link expires in <strong>1 hour</strong> and can be used once.</p>
+          <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 0 20px">
+            <tr><td style="border-radius:10px;background:#C8102E">
+              <a href="${escapeHtml(data.resetUrl)}" style="display:inline-block;padding:12px 22px;color:#fff;font-size:14px;font-weight:700;text-decoration:none;border-radius:10px">Reset password</a>
+            </td></tr>
+          </table>
+          <p style="margin:0 0 6px;color:#6b7280;font-size:12px;line-height:1.6">Or paste this link into your browser:</p>
+          <p style="margin:0 0 20px;color:#1E3A5F;font-size:12px;word-break:break-all">${escapeHtml(data.resetUrl)}</p>
+          <p style="margin:0;color:#6b7280;font-size:13px;line-height:1.6">If you didn't request this, you can safely ignore this email — your password won't change.</p>
+        </td></tr>
+        <tr><td style="padding:16px 28px;background:#F7F2EA;color:#6b7280;font-size:12px">Handcrafted to order in South Carolina, USA · apartmentloftbed.com</td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body></html>`;
+}
+
+function renderVerifyHtml(data: { name: string; verifyUrl: string }): string {
+  return `<!doctype html><html><body style="margin:0;background:#F4EDE3;font-family:Helvetica,Arial,sans-serif">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F4EDE3;padding:24px 0">
+    <tr><td align="center">
+      <table role="presentation" width="520" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:14px;overflow:hidden;max-width:520px;width:100%">
+        <tr><td style="background:#1E3A5F;padding:20px 28px;color:#fff;font-size:18px;font-weight:700">Victory Martin — Apt.Bed</td></tr>
+        <tr><td style="padding:28px">
+          <p style="margin:0 0 8px;color:#0C1826;font-size:16px">Hi ${escapeHtml(data.name)},</p>
+          <p style="margin:0 0 20px;color:#374151;font-size:14px;line-height:1.6">Thanks for creating an Apt.Bed account. Confirm your email address to activate it. This link expires in <strong>24 hours</strong>.</p>
+          <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 0 20px">
+            <tr><td style="border-radius:10px;background:#C8102E">
+              <a href="${escapeHtml(data.verifyUrl)}" style="display:inline-block;padding:12px 22px;color:#fff;font-size:14px;font-weight:700;text-decoration:none;border-radius:10px">Verify email</a>
+            </td></tr>
+          </table>
+          <p style="margin:0 0 6px;color:#6b7280;font-size:12px;line-height:1.6">Or paste this link into your browser:</p>
+          <p style="margin:0 0 20px;color:#1E3A5F;font-size:12px;word-break:break-all">${escapeHtml(data.verifyUrl)}</p>
+          <p style="margin:0;color:#6b7280;font-size:13px;line-height:1.6">If you didn't create this account, you can safely ignore this email.</p>
+        </td></tr>
+        <tr><td style="padding:16px 28px;background:#F7F2EA;color:#6b7280;font-size:12px">Handcrafted to order in South Carolina, USA · apartmentloftbed.com</td></tr>
       </table>
     </td></tr>
   </table>

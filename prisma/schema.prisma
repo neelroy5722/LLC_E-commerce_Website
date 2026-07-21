@@ -38,8 +38,42 @@ model User {
   state        String?
   zip          String?
   createdAt    DateTime @default(now())
-  orders       Order[]
-  reviews      Review[]
+  // Null until the user confirms their email via the verification link. Sign-in
+  // is blocked while this is null (seeded accounts are created pre-verified).
+  emailVerifiedAt DateTime?
+  orders             Order[]
+  reviews            Review[]
+  resetTokens        PasswordResetToken[]
+  verificationTokens EmailVerificationToken[]
+}
+
+// Single-use, time-limited tokens for the "forgot password" flow. Only the
+// SHA-256 hash of the token is stored — the raw token lives only in the emailed
+// link — so a database read can't be used to reset anyone's password.
+model PasswordResetToken {
+  id        String    @id @default(cuid())
+  tokenHash String    @unique
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([userId])
+}
+
+// Single-use, time-limited tokens for confirming a new account's email address.
+// Same hashed-token design as PasswordResetToken.
+model EmailVerificationToken {
+  id        String    @id @default(cuid())
+  tokenHash String    @unique
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([userId])
 }
 
 model Product {
