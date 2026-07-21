@@ -33,13 +33,7 @@ export const INCLUDED_PIECES = [
   { name: "Bed Table", desc: "A tabletop at the head of the bed, right within reach." },
 ];
 
-export const AUDIENCES = [
-  "Homeowners",
-  "Apartments",
-  "Small homes",
-  "Universities",
-  "Dormitories",
-];
+export const AUDIENCES = ["Apartments", "Small homes", "Dormitories"];
 
 /** Order lifecycle, shared by the customer and (future) admin views. */
 export const ORDER_STATUSES = [
@@ -61,7 +55,7 @@ export const FAQS = [
   },
   {
     q: "What sizes are available?",
-    a: "There are three sizes: Twin/Twin Long, Queen, and King. With each of these are the height options — Low, Medium, and High.",
+    a: "There are three sizes: Twin/Twin Long, Queen, and King. With each of these are the height options — Medium and High.",
   },
   {
     q: "How is it shipped?",

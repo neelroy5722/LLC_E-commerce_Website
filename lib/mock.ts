@@ -47,9 +47,9 @@ export const MOCK_ORDERS: MockOrder[] = [
     customer: "Priya Shah",
     email: "priya.s@email.com",
     size: "twin",
-    height: "low",
+    height: "medium",
     wood: "maple",
-    total: 3650,
+    total: 3850,
     statusIndex: 4,
   },
   {

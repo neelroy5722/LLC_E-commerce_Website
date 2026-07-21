@@ -18,8 +18,8 @@ export interface CeilingRule {
 
 /**
  * Ordered from tallest requirement to shortest. Evaluated top-down; the first
- * rule the ceiling satisfies wins. Example baseline from the brief:
- *   ≤ 8 ft  → Low, ≤ 9 ft → Medium, else → High.
+ * rule the ceiling satisfies wins. With two deck heights the baseline is:
+ *   > 9 ft → High, otherwise → Medium.
  */
 export const CEILING_RULES: CeilingRule[] = [
   {
@@ -31,14 +31,8 @@ export const CEILING_RULES: CeilingRule[] = [
   {
     height: "medium",
     label: "Medium",
-    minCeilingFt: 8.01,
-    rationale: "A medium deck gives you storage while keeping safe sitting headroom.",
-  },
-  {
-    height: "low",
-    label: "Low",
     minCeilingFt: 0,
-    rationale: "A low deck keeps a safe gap above your head on a shorter ceiling.",
+    rationale: "A medium deck gives you storage while keeping safe sitting headroom.",
   },
 ];
 

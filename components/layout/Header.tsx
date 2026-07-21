@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
@@ -14,6 +14,7 @@ import { cn } from "@/lib/utils";
 export function Header() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+  const headerRef = useRef<HTMLElement>(null);
   const { data: session, status } = useSession();
   const signedIn = status === "authenticated";
   const isAdmin = session?.user?.role === "admin";
@@ -22,8 +23,32 @@ export function Header() {
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname.startsWith(href);
 
+  // Close the drawer on navigation so it never lingers after a route change.
+  useEffect(() => setOpen(false), [pathname]);
+
+  // Dismiss on Escape or on any click/tap outside the header — so the menu
+  // goes away without having to press the X.
+  useEffect(() => {
+    if (!open) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    const onPointerDown = (e: PointerEvent) => {
+      if (!headerRef.current?.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("keydown", onKeyDown);
+    document.addEventListener("pointerdown", onPointerDown);
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      document.removeEventListener("pointerdown", onPointerDown);
+    };
+  }, [open]);
+
   return (
-    <header className="sticky top-0 z-50 border-b border-brand-blue/10 bg-white/85 backdrop-blur-xl">
+    <header
+      ref={headerRef}
+      className="sticky top-0 z-50 border-b border-brand-blue/10 bg-white/85 backdrop-blur-xl"
+    >
       <div className="container flex h-[4.5rem] items-center justify-between gap-4">
         <Link href="/" aria-label="Apt.Bed by Victory Martin — home" className="shrink-0">
           <Logo />

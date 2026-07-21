@@ -112,16 +112,17 @@ export default async function AboutPage() {
         </div>
       </section>
 
-      {/* Featured customer reviews (admin-curated) */}
-      {reviews.length > 0 && (
-        <section className="bg-panel">
-          <div className="container py-14 sm:py-16">
-            <div className="text-center">
-              <span className="eyebrow">Loved by owners</span>
-              <h2 className="display-hero mt-3 text-3xl text-ink sm:text-4xl">
-                What customers say
-              </h2>
-            </div>
+      {/* Customer reviews (admin-curated). With no approved reviews yet we show a
+          genuine invitation rather than implying we have testimonials. */}
+      <section className="bg-panel">
+        <div className="container py-14 sm:py-16">
+          <div className="text-center">
+            <span className="eyebrow">{reviews.length > 0 ? "Loved by owners" : "Reviews"}</span>
+            <h2 className="display-hero mt-3 text-3xl text-ink sm:text-4xl">
+              {reviews.length > 0 ? "What customers say" : "Be the first to review"}
+            </h2>
+          </div>
+          {reviews.length > 0 ? (
             <div className="mx-auto mt-10 grid max-w-5xl gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {reviews.map((r) => (
                 <figure key={r.id} className="card flex flex-col p-6">
@@ -149,9 +150,23 @@ export default async function AboutPage() {
                 </figure>
               ))}
             </div>
-          </div>
-        </section>
-      )}
+          ) : (
+            <div className="mx-auto mt-8 max-w-xl text-center">
+              <p className="text-sm leading-relaxed text-muted">
+                We&apos;re a new company, so we haven&apos;t collected customer reviews yet. If
+                you own an Apt.Bed, we&apos;d genuinely love to hear how it&apos;s working in
+                your space — your review will be the first.
+              </p>
+              <ButtonLink href="/account/reviews" className="mt-6">
+                Write a review
+              </ButtonLink>
+              <p className="mt-3 text-xs text-muted">
+                You&apos;ll need an account so we can verify your purchase.
+              </p>
+            </div>
+          )}
+        </div>
+      </section>
     </>
   );
 }

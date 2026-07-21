@@ -3,12 +3,12 @@ import type { NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
 
 /**
- * Gate the whole shopping + account + admin experience behind login. Public
- * marketing pages (home, about, faq, contact, brand, assembly, legal) stay
- * open so visitors can learn about the Apt.Bed, but configuring, carting,
- * checking out, and any account/admin action require a signed-in user.
+ * Visitors can browse freely: the marketing pages, the product page, the
+ * configurator, and the cart are all open — no account needed to look around
+ * or price a build (the cart lives in localStorage). Signing in is only
+ * required to actually check out, or to reach an account/admin area.
  */
-const PROTECTED = ["/product", "/cart", "/checkout", "/account", "/admin"];
+const PROTECTED = ["/checkout", "/account", "/admin"];
 
 export async function middleware(req: NextRequest) {
   const { pathname, search } = req.nextUrl;
@@ -36,11 +36,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    "/product/:path*",
-    "/cart/:path*",
-    "/checkout/:path*",
-    "/account/:path*",
-    "/admin/:path*",
-  ],
+  matcher: ["/checkout/:path*", "/account/:path*", "/admin/:path*"],
 };

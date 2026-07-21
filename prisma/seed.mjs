@@ -14,9 +14,8 @@ const SIZES = [
   { key: "king", label: "King", dimensions: '76" × 80"', sortOrder: 2 },
 ];
 const HEIGHTS = [
-  { key: "low", label: "Low", deckHeightFt: 3.5, blurb: "Sits close to the floor — best for lower ceilings.", sortOrder: 0 },
-  { key: "medium", label: "Medium", deckHeightFt: 4.5, blurb: "Balanced storage and headroom for most rooms.", sortOrder: 1 },
-  { key: "high", label: "High", deckHeightFt: 5.5, blurb: "Maximum storage underneath — needs a taller ceiling.", sortOrder: 2 },
+  { key: "medium", label: "Medium", deckHeightFt: 4.5, blurb: "Balanced storage and headroom for most rooms.", sortOrder: 0 },
+  { key: "high", label: "High", deckHeightFt: 5.5, blurb: "Maximum storage underneath — needs a taller ceiling.", sortOrder: 1 },
 ];
 const WOODS = [
   { key: "oak", label: "Oak", swatch: "#C9A26B", priceDelta: 0, sortOrder: 0 },
@@ -24,19 +23,18 @@ const WOODS = [
   { key: "walnut", label: "Walnut", swatch: "#5C4033", priceDelta: 350, sortOrder: 2 },
 ];
 const BASE_PRICES = {
-  twin: { low: 3500, medium: 3700, high: 3900 },
-  queen: { low: 4300, medium: 4600, high: 4900 },
-  king: { low: 5000, medium: 5300, high: 5600 },
+  twin: { medium: 3700, high: 3900 },
+  queen: { medium: 4600, high: 4900 },
+  king: { medium: 5300, high: 5600 },
 };
 const STOCK = {
-  twin: { low: 24, medium: 18, high: 12 },
-  queen: { low: 16, medium: 20, high: 9 },
-  king: { low: 8, medium: 11, high: 6 },
+  twin: { medium: 18, high: 12 },
+  queen: { medium: 20, high: 9 },
+  king: { medium: 11, high: 6 },
 };
 const CEILING_RULES = [
   { heightKey: "high", label: "High", minCeilingFt: 9.01, rationale: "Your ceiling comfortably clears the tall deck with room to sit up.", sortOrder: 0 },
-  { heightKey: "medium", label: "Medium", minCeilingFt: 8.01, rationale: "A medium deck gives you storage while keeping safe sitting headroom.", sortOrder: 1 },
-  { heightKey: "low", label: "Low", minCeilingFt: 0, rationale: "A low deck keeps a safe gap above your head on a shorter ceiling.", sortOrder: 2 },
+  { heightKey: "medium", label: "Medium", minCeilingFt: 0, rationale: "A medium deck gives you storage while keeping safe sitting headroom.", sortOrder: 1 },
 ];
 // Representative US state sales-tax rates (%). "*" is the fallback.
 const TAX_RATES = [
@@ -56,8 +54,7 @@ const TAX_RATES = [
 const FAQS = [
   { question: "What exactly is the Apt.Bed?", answer: "The Apt.Bed is a modern single piece of furniture that consists of a bed, closet, desk, chest of drawers, bed table, and electrical availability for all your devices. It's engineered to give you a full bedroom suite using just a little more floor space than the mattress." },
   { question: "How do I choose the right height?", answer: "You choose the height of your Apt.Bed by figuring the ceiling height minus your sitting height. When you're sitting, the measurement from the seat to the top of your head is your sitting height. Subtract that from the room height, and you will have about how tall your bed should be. Then pick the bed that meets your needs." },
-  { question: "What sizes are available?", answer: "Three sizes — Twin/Twin Long, Queen, and King — each available in Low, Medium, and High deck heights. Wood finish options are Oak, Maple, and Walnut." },
-  { question: "Is it made to order?", answer: "Yes. Each Apt.Bed is currently built to order after purchase. As we scale, select configurations will also be available in stock for faster delivery." },
+  { question: "What sizes are available?", answer: "Three sizes — Twin/Twin Long, Queen, and King — each available in Medium and High deck heights. Wood finish options are Oak, Maple, and Walnut." },
   { question: "How is it shipped?", answer: "Because the Apt.Bed is a large, solid-wood unit, it ships by freight carrier rather than standard parcel. A freight coordinator will contact you to schedule delivery, which is why we ask for a phone number at checkout." },
   { question: "Do I have to assemble it?", answer: "Some assembly is required. Every unit ships with clear instructions, and our website hosts step-by-step assembly videos you can follow at your own pace." },
   { question: "How do I pay?", answer: "Checkout is 100% up front via secure card payment — no deposits or financing to manage. Sales tax is calculated automatically based on your shipping address." },
@@ -244,7 +241,7 @@ async function main() {
   // Base prices used for back-dated demo orders (mirror BASE_PRICES/WOODS).
   const BASE = BASE_PRICES;
   const WOOD_DELTA = { oak: 0, maple: 150, walnut: 350 };
-  const HEIGHTS_K = ["low", "medium", "high"];
+  const HEIGHTS_K = ["medium", "high"];
   const SIZES_K = ["twin", "queen", "king"];
   const WOODS_K = ["oak", "maple", "walnut"];
   // Deterministic pseudo-variety without Math.random (keeps seeds reproducible).
@@ -316,48 +313,11 @@ async function main() {
     ),
   });
   const deliveredOrder = await prisma.order.create({
-    data: buildOrder("VM-1054", [{ sizeKey: "twin", heightKey: "low", woodKey: "maple", baseDollars: 3500, deltaDollars: 150 }], 4),
+    data: buildOrder("VM-1054", [{ sizeKey: "twin", heightKey: "medium", woodKey: "maple", baseDollars: 3700, deltaDollars: 150 }], 4),
   });
 
-  // Sample reviews — a mix of approved/featured (shown on About) and pending (for admin moderation).
-  await prisma.review.createMany({
-    data: [
-      {
-        userId: john.id,
-        orderId: deliveredOrder.id,
-        authorName: "John Rivera",
-        rating: 5,
-        title: "Gave us our floor back",
-        body: "We put the King in our guest room and suddenly it's a guest room AND an office. Solid wood, feels like it'll outlast us. Worth every dollar.",
-        status: "approved",
-        featured: true,
-      },
-      {
-        authorName: "Dana P.",
-        rating: 5,
-        title: "Perfect for a small apartment",
-        body: "I live in a 480 sq ft studio. The Apt.Bed is the only reason I have a real desk and a dresser. Assembly took an afternoon with the videos.",
-        status: "approved",
-        featured: true,
-      },
-      {
-        authorName: "Marcus T.",
-        rating: 4,
-        title: "Great unit, plan your ceiling",
-        body: "Measure your ceiling first — the height tool nailed it. Docked one star only because freight scheduling took a couple of calls.",
-        status: "approved",
-        featured: false,
-      },
-      {
-        authorName: "Priya S.",
-        rating: 5,
-        title: "Dorm game-changer",
-        body: "Furnished my daughter's dorm with the Twin. One piece, everything she needs. Pending photos to add later!",
-        status: "pending",
-        featured: false,
-      },
-    ],
-  });
+  // No seeded reviews: the store has no customers yet, so the About page shows
+  // a genuine empty state and invites the first real review.
 
   console.log("Seed complete ✓");
   console.log("  Admin:    admin@apartmentloftbed.com / admin1234");

@@ -7,7 +7,7 @@ import { BedDouble, Shirt, Laptop, Archive, Lamp, Plug } from "lucide-react";
 export const metadata: Metadata = {
   title: "Find Your Bed",
   description:
-    "Find your Apt.Bed: choose Twin/Twin Long, Queen, or King, pick a Low, Medium, or High deck, and select a finish. Live price and preview for every combination.",
+    "Find your Apt.Bed: choose Twin/Twin Long, Queen, or King, pick a Medium or High deck, and select a finish. Live price and preview for every combination.",
 };
 
 const PIECES = [

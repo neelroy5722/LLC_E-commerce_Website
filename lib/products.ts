@@ -8,11 +8,11 @@
  *
  * Sizes: Twin and Twin Long share a footprint (same width; Twin Long is only
  * longer), so they are presented as a single selectable size. Three sizes ×
- * three heights = the nine variations.
+ * two heights = the six variations.
  */
 
 export type SizeId = "twin" | "queen" | "king";
-export type HeightId = "low" | "medium" | "high";
+export type HeightId = "medium" | "high";
 export type WoodId = "oak" | "maple" | "walnut";
 
 export interface SizeOption {
@@ -46,7 +46,6 @@ export const SIZES: SizeOption[] = [
 ];
 
 export const HEIGHTS: HeightOption[] = [
-  { id: "low", label: "Low", deckHeightFt: 3.5, blurb: "Sits close to the floor — best for lower ceilings." },
   { id: "medium", label: "Medium", deckHeightFt: 4.5, blurb: "Balanced storage and headroom for most rooms." },
   { id: "high", label: "High", deckHeightFt: 5.5, blurb: "Maximum storage underneath — needs a taller ceiling." },
 ];
@@ -58,13 +57,13 @@ export const WOODS: WoodOption[] = [
 ];
 
 /**
- * Base variant price matrix: size × height. Three sizes × three heights yields
- * the nine distinct base prices (the "9 variations").
+ * Base variant price matrix: size × height. Three sizes × two heights yields
+ * the six distinct base prices.
  */
 export const BASE_PRICES: Record<SizeId, Record<HeightId, number>> = {
-  twin: { low: 3500, medium: 3700, high: 3900 },
-  queen: { low: 4300, medium: 4600, high: 4900 },
-  king: { low: 5000, medium: 5300, high: 5600 },
+  twin: { medium: 3700, high: 3900 },
+  queen: { medium: 4600, high: 4900 },
+  king: { medium: 5300, high: 5600 },
 };
 
 export interface VariantSelection {
