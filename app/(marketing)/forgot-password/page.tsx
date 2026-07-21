@@ -38,7 +38,7 @@ export default function ForgotPasswordPage() {
           <LogoMark className="h-11 w-11" />
           <h1 className="mt-4 font-display text-3xl font-bold text-ink">Reset your password</h1>
           <p className="mt-1 text-sm text-muted">
-            Enter your email and we'll send you a link to set a new password.
+            Enter your email and we&apos;ll send you a link to set a new password.
           </p>
         </div>
 
@@ -47,11 +47,11 @@ export default function ForgotPasswordPage() {
             <MailCheck className="mx-auto h-8 w-8 text-brand-sky" />
             <h2 className="font-display text-xl font-semibold text-ink">Check your email</h2>
             <p className="text-sm text-muted">
-              If an account exists for <span className="font-medium text-ink">{email}</span>, we've sent a
+              If an account exists for <span className="font-medium text-ink">{email}</span>, we&apos;ve sent a
               link to reset your password. It expires in 1 hour.
             </p>
             <p className="text-xs text-muted">
-              Didn't get it? Check your spam folder, or{" "}
+              Didn&apos;t get it? Check your spam folder, or{" "}
               <button
                 type="button"
                 onClick={() => setSent(false)}
