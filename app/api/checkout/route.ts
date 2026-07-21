@@ -73,7 +73,10 @@ export async function POST(req: Request) {
   }
 
   const userId = session.user.id;
-  const origin = new URL(req.url).origin;
+  // Behind a reverse proxy (Caddy) the request host is the app's internal
+  // localhost address, so prefer the configured public URL for Stripe's
+  // success/cancel redirect targets. Falls back to the request origin in dev.
+  const origin = process.env.NEXTAUTH_URL ?? new URL(req.url).origin;
 
   // --- Real Stripe Checkout (test mode) ---
   if (stripeEnabled && stripe) {
