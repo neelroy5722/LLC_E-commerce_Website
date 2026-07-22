@@ -3,11 +3,13 @@ import { Star, Check, X, Trash2, Sparkles } from "lucide-react";
 import { prisma } from "@/lib/db";
 import { SortSelect } from "@/components/admin/SortSelect";
 import { ReviewEmailForm } from "@/components/admin/ReviewEmailForm";
+import { BulkReviewEmailForm } from "@/components/admin/BulkReviewEmailForm";
 import {
   setReviewStatusAction,
   toggleReviewFeaturedAction,
   deleteReviewAction,
   emailReviewerAction,
+  emailAllReviewersAction,
 } from "../actions";
 
 export const dynamic = "force-dynamic";
@@ -30,35 +32,39 @@ export default async function AdminReviews({ searchParams }: { searchParams: { s
   });
   const pending = reviews.filter((r) => r.status === "pending");
   const featuredCount = reviews.filter((r) => r.featured && r.status === "approved").length;
+  const reviewerCount = new Set(reviews.filter((r) => r.user?.email).map((r) => r.user!.email)).size;
 
   return (
     <div className="space-y-8">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="font-display text-2xl font-bold text-ink">Reviews</h1>
+          <h1 className="font-sans text-2xl font-bold text-ink">Reviews</h1>
           <p className="text-sm text-muted">
             Moderate customer reviews and choose which appear on the About page.
             {" "}
             <span className="text-ink/80">{pending.length} awaiting review · {featuredCount} featured</span>
           </p>
         </div>
-        <SortSelect
-          defaultValue="status"
-          options={[
-            { value: "status", label: "Status (pending first)" },
-            { value: "newest", label: "Newest" },
-            { value: "oldest", label: "Oldest" },
-            { value: "rating_high", label: "Rating: high → low" },
-            { value: "rating_low", label: "Rating: low → high" },
-            { value: "author", label: "Author name" },
-          ]}
-        />
+        <div className="flex items-center gap-3">
+          {reviewerCount > 0 && <BulkReviewEmailForm action={emailAllReviewersAction} count={reviewerCount} />}
+          <SortSelect
+            defaultValue="status"
+            options={[
+              { value: "status", label: "Status (pending first)" },
+              { value: "newest", label: "Newest" },
+              { value: "oldest", label: "Oldest" },
+              { value: "rating_high", label: "Rating: high → low" },
+              { value: "rating_low", label: "Rating: low → high" },
+              { value: "author", label: "Author name" },
+            ]}
+          />
+        </div>
       </div>
 
       {reviews.length === 0 ? (
         <div className="card p-10 text-center text-muted">No reviews yet.</div>
       ) : (
-        <ul className="space-y-4">
+        <ul className="grid items-start gap-4 lg:grid-cols-2">
           {reviews.map((r) => (
             <li key={r.id} className="card p-5">
               <div className="flex flex-wrap items-start justify-between gap-3">

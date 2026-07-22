@@ -57,19 +57,21 @@ export default async function AdminProducts() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="font-display text-2xl font-bold text-ink">Product management</h1>
+        <h1 className="font-sans text-2xl font-bold text-ink">Product management</h1>
         <p className="text-sm text-muted">
           Sizes, heights, prices, stock, finishes, and images. Availability is set
           automatically from stock — units on hand show as <span className="text-emerald-700">In stock</span>, otherwise <span className="text-ink/80">Made to order</span>.
         </p>
       </div>
 
+      {/* Row 1 — three management sections side by side */}
+      <div className="grid items-start gap-6 xl:grid-cols-3">
       {/* Sizes & heights (editable + delete) */}
       <div className="card p-6">
         <form action={updateCatalogLabelsAction}>
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h2 className="font-display text-lg font-bold text-ink">Sizes &amp; heights</h2>
+              <h2 className="font-sans text-lg font-bold text-ink">Sizes &amp; heights</h2>
               <p className="text-sm text-muted">Rename sizes, edit their dimensions, and rename heights.</p>
             </div>
             <SubmitButton savedLabel="Saved">
@@ -139,7 +141,7 @@ export default async function AdminProducts() {
       <form action={updatePricesAction} className="card overflow-hidden">
         <div className="flex items-center justify-between border-b border-brand-blue/[0.08] px-6 py-4">
           <div>
-            <h2 className="font-display text-lg font-bold text-ink">Prices &amp; stock</h2>
+            <h2 className="font-sans text-lg font-bold text-ink">Prices &amp; stock</h2>
             <p className="text-sm text-muted">Base price (USD) and units on hand per size × height.</p>
           </div>
           <SubmitButton savedLabel="Saved">
@@ -208,7 +210,7 @@ export default async function AdminProducts() {
         <form action={updateWoodsAction}>
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h2 className="font-display text-lg font-bold text-ink">Wood finishes</h2>
+              <h2 className="font-sans text-lg font-bold text-ink">Wood finishes</h2>
               <p className="text-sm text-muted">Rename finishes, set upcharges and availability, or remove one.</p>
             </div>
             <SubmitButton savedLabel="Saved">
@@ -266,10 +268,11 @@ export default async function AdminProducts() {
           </SubmitButton>
         </form>
       </div>
+      </div>
 
-      {/* Images — full grid */}
+      {/* Row 2 — product images, full width */}
       <div className="card p-6">
-        <h2 className="font-display text-lg font-bold text-ink">Product images</h2>
+        <h2 className="font-sans text-lg font-bold text-ink">Product images</h2>
         <p className="text-sm text-muted">
           Every combination is shown below. Upload a real photo to replace any composed preview.
         </p>

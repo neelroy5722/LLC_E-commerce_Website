@@ -24,7 +24,7 @@ export default async function AdminCustomers() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-display text-2xl font-bold text-ink">Customers</h1>
+        <h1 className="font-sans text-2xl font-bold text-ink">Customers</h1>
         <p className="text-sm text-muted">Search, view contact details, and manage accounts.</p>
       </div>
       <AdminCustomersView customers={rows} />

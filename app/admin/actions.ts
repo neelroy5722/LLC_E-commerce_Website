@@ -304,6 +304,40 @@ export async function deletePhotoAction(formData: FormData) {
   revalidatePath("/");
 }
 
+/** Single "Save all settings" — freight + tax mode, tax rates, and ceiling rules. */
+export async function saveSettingsAction(formData: FormData) {
+  await assertAdmin();
+
+  const freightDollars = parseInt(String(formData.get("freight_dollars")), 10);
+  if (Number.isFinite(freightDollars) && freightDollars >= 0) {
+    await setSetting("freight_flat_cents", String(dollarsToCents(freightDollars)));
+  }
+  const taxMode = String(formData.get("tax_mode"));
+  if (taxMode === "table" || taxMode === "stripe") await setSetting("tax_mode", taxMode);
+
+  const rates = await prisma.taxRate.findMany();
+  const rules = await prisma.ceilingRule.findMany();
+  await Promise.all([
+    ...rates.map((t) => {
+      const pct = parseFloat(String(formData.get(`tax_${t.id}`) ?? t.ratePercent));
+      return prisma.taxRate.update({ where: { id: t.id }, data: { ratePercent: Number.isFinite(pct) ? pct : t.ratePercent } });
+    }),
+    ...rules.map((r) => {
+      const label = String(formData.get(`ceil_label_${r.id}`) ?? r.label).trim();
+      const min = parseFloat(String(formData.get(`ceil_min_${r.id}`) ?? r.minCeilingFt));
+      const rationale = String(formData.get(`ceil_rationale_${r.id}`) ?? r.rationale).trim();
+      return prisma.ceilingRule.update({
+        where: { id: r.id },
+        data: { label: label || r.label, minCeilingFt: Number.isFinite(min) ? min : r.minCeilingFt, rationale: rationale || r.rationale },
+      });
+    }),
+  ]);
+
+  revalidatePath("/admin/settings");
+  revalidatePath("/product");
+  revalidatePath("/checkout");
+}
+
 export async function updateSettingsAction(formData: FormData) {
   await assertAdmin();
   const freightDollars = parseInt(String(formData.get("freight_dollars")), 10);
@@ -430,11 +464,26 @@ export async function emailReviewerAction(formData: FormData) {
   revalidatePath("/admin/reviews");
 }
 
-/** Marks all admin notifications as read (clears the top-bar badge). */
-export async function markNotificationsReadAction() {
+/** Emails every distinct customer who has left a review (with a registered email). */
+export async function emailAllReviewersAction(formData: FormData) {
   await assertAdmin();
-  await prisma.notification.updateMany({ where: { readAt: null }, data: { readAt: new Date() } });
-  revalidatePath("/admin");
+  const subject = String(formData.get("subject") || "").trim();
+  const message = String(formData.get("message") || "").trim();
+  if (!subject || !message) return;
+
+  const reviews = await prisma.review.findMany({
+    where: { userId: { not: null } },
+    include: { user: { select: { email: true, name: true } } },
+  });
+  const seen = new Set<string>();
+  for (const r of reviews) {
+    const to = r.user?.email;
+    if (!to || seen.has(to)) continue;
+    seen.add(to);
+    // eslint-disable-next-line no-await-in-loop
+    await sendAdminMessage({ to, customerName: r.user?.name ?? r.authorName, subject, message });
+  }
+  revalidatePath("/admin/reviews");
 }
 
 export async function deleteCustomerAction(formData: FormData) {

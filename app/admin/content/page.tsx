@@ -1,5 +1,6 @@
-import { Plus, Megaphone, Trash2, Save } from "lucide-react";
+import { Plus, Megaphone, Save } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import { FaqItem } from "@/components/admin/FaqItem";
 import { prisma } from "@/lib/db";
 import { upsertFaqAction, deleteFaqAction, saveAnnouncementAction } from "../actions";
 
@@ -14,15 +15,16 @@ export default async function AdminContent() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="font-display text-2xl font-bold text-ink">Content management</h1>
+        <h1 className="font-sans text-2xl font-bold text-ink">Content management</h1>
         <p className="text-sm text-muted">Edit FAQs and the site announcement.</p>
       </div>
 
+      <div className="grid items-start gap-6 xl:grid-cols-2">
       {/* Announcement */}
       <form action={saveAnnouncementAction} className="card p-6">
         <div className="flex items-center gap-2">
           <Megaphone className="h-5 w-5 text-brand-red-700" />
-          <h2 className="font-display text-lg font-bold text-ink">Site announcement</h2>
+          <h2 className="font-sans text-lg font-bold text-ink">Site announcement</h2>
         </div>
         <textarea
           name="message"
@@ -40,36 +42,12 @@ export default async function AdminContent() {
         </div>
       </form>
 
-      {/* FAQ list */}
+      {/* FAQ list — one line per question, expands on click */}
       <div className="card p-6">
-        <h2 className="font-display text-lg font-bold text-ink">FAQs</h2>
-        <ul className="mt-4 space-y-4">
+        <h2 className="font-sans text-lg font-bold text-ink">FAQs</h2>
+        <ul className="mt-4 space-y-2">
           {faqs.map((f) => (
-            <li key={f.id} className="rounded-2xl border border-brand-blue/[0.08] p-4">
-              <form action={upsertFaqAction} className="space-y-2">
-                <input type="hidden" name="id" value={f.id} />
-                <input
-                  name="question"
-                  defaultValue={f.question}
-                  className="w-full rounded-lg border border-brand-blue/12 bg-panel px-3 py-2 text-sm font-medium text-ink outline-none focus:border-brand-sky"
-                />
-                <textarea
-                  name="answer"
-                  rows={2}
-                  defaultValue={f.answer}
-                  className="w-full rounded-lg border border-brand-blue/12 bg-panel px-3 py-2 text-sm text-ink/80 outline-none focus:border-brand-sky"
-                />
-                <div className="flex items-center gap-2">
-                  <Button type="submit" size="sm" variant="outline" className="h-8 px-3 text-xs">Save</Button>
-                </div>
-              </form>
-              <form action={deleteFaqAction} className="mt-2">
-                <input type="hidden" name="id" value={f.id} />
-                <button type="submit" className="inline-flex items-center gap-1 text-xs text-muted hover:text-brand-red-600">
-                  <Trash2 className="h-3.5 w-3.5" /> Delete
-                </button>
-              </form>
-            </li>
+            <FaqItem key={f.id} faq={f} upsertAction={upsertFaqAction} deleteAction={deleteFaqAction} />
           ))}
         </ul>
 
@@ -89,6 +67,7 @@ export default async function AdminContent() {
           />
           <Button type="submit" size="sm" className="h-8 px-3 text-xs">Add FAQ</Button>
         </form>
+      </div>
       </div>
     </div>
   );

@@ -144,11 +144,20 @@ function OrderTable({
     <div className="card overflow-hidden">
       <div className="flex items-center gap-2 border-b border-brand-blue/[0.08] px-6 py-4">
         <Icon className={`h-4 w-4 ${tone}`} />
-        <h2 className="font-display text-lg font-bold text-ink">{title}</h2>
+        <h2 className="font-sans text-lg font-bold text-ink">{title}</h2>
         <span className="rounded-full bg-brand-blue/[0.06] px-2 py-0.5 text-xs font-medium text-muted">{rows.length}</span>
       </div>
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[46rem] text-sm">
+        <table className="w-full min-w-[46rem] table-fixed text-sm">
+          <colgroup>
+            <col className="w-24" />
+            <col className="w-44" />
+            <col />
+            <col className="w-28" />
+            <col className="w-28" />
+            <col className="w-36" />
+            <col className="w-24" />
+          </colgroup>
           <thead>
             <tr className="border-b border-brand-blue/[0.08] bg-brand-blue/[0.02] text-left text-xs uppercase tracking-wide text-muted">
               <th className="px-6 py-3 font-medium">Order</th>
@@ -166,18 +175,14 @@ function OrderTable({
             )}
             {rows.map((o) => {
               const isOpen = expanded.has(o.id);
+              const products = o.items.map((it) => `${it.quantity > 1 ? `${it.quantity}× ` : ""}${it.label}`).join(" · ") || "—";
               return (
                 <Fragment key={o.id}>
                   <tr className="border-b border-brand-blue/[0.06] last:border-0">
-                    <td className="px-6 py-3.5 font-medium text-ink">{o.orderNumber}</td>
-                    <td className="px-6 py-3.5">
-                      <div className="text-ink/90">{o.customerName}</div>
-                      <div className="text-xs text-muted">{o.email}</div>
-                    </td>
-                    <td className="max-w-[16rem] px-6 py-3.5 text-ink/80">
-                      {o.items.map((it) => `${it.quantity > 1 ? `${it.quantity}× ` : ""}${it.label}`).join(" · ") || "—"}
-                    </td>
-                    <td className="px-6 py-3.5 whitespace-nowrap text-muted">{o.date}</td>
+                    <td className="truncate px-6 py-3.5 font-medium text-ink">{o.orderNumber}</td>
+                    <td className="truncate px-6 py-3.5 text-ink/90">{o.customerName}</td>
+                    <td className="truncate px-6 py-3.5 text-ink/80" title={products}>{products}</td>
+                    <td className="truncate px-6 py-3.5 text-muted">{o.date}</td>
                     <td className="px-6 py-3.5 text-right font-medium text-ink">{formatCents(o.total)}</td>
                     <td className="px-6 py-3.5"><StatusBadge statusIndex={overallIndex(o)} /></td>
                     <td className="px-6 py-3.5 text-right">

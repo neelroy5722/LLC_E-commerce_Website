@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Bell } from "lucide-react";
 import { DashboardNav } from "@/components/layout/DashboardNav";
+import { SignOutButton } from "@/components/admin/SignOutButton";
 import { Logo, LogoMark } from "@/components/brand/Logo";
 import { requireAdmin } from "@/lib/session";
 import { prisma } from "@/lib/db";
@@ -40,8 +41,8 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           </div>
           <div className="flex items-center gap-2">
             <Link
-              href="/admin#notifications"
-              aria-label={`Notifications${unread > 0 ? ` (${unread} unread)` : ""}`}
+              href="/admin/orders"
+              aria-label={`Orders${unread > 0 ? ` (${unread} new)` : ""}`}
               className="relative inline-flex h-9 w-9 items-center justify-center rounded-full border border-brand-blue/12 text-ink/70 transition-colors hover:border-brand-blue/25 hover:text-ink"
             >
               <Bell className="h-4 w-4" />
@@ -51,9 +52,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
                 </span>
               )}
             </Link>
-            <Link href="/" className="rounded-full border border-brand-blue/12 px-3 py-1.5 text-sm text-ink/70 transition-colors hover:border-brand-blue/25 hover:text-ink sm:hidden">
-              Store
-            </Link>
+            <SignOutButton />
           </div>
         </header>
 

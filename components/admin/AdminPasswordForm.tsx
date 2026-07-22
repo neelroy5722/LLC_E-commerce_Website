@@ -55,7 +55,7 @@ export function AdminPasswordForm() {
   return (
     <form onSubmit={onSubmit} className="card p-6">
       <div>
-        <h2 className="font-display text-lg font-bold text-ink">Change password</h2>
+        <h2 className="font-sans text-lg font-bold text-ink">Change password</h2>
         <p className="text-sm text-muted">Update the password for your admin account.</p>
       </div>
 

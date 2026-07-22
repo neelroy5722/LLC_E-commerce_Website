@@ -4,6 +4,9 @@ import { AdminOrdersView, type AdminOrderRow } from "@/components/admin/AdminOrd
 export const dynamic = "force-dynamic";
 
 export default async function AdminOrders() {
+  // Opening the orders screen clears the new-order badge in the top bar.
+  await prisma.notification.updateMany({ where: { readAt: null }, data: { readAt: new Date() } });
+
   const orders = await prisma.order.findMany({
     include: { items: true },
     orderBy: { createdAt: "desc" },
@@ -31,7 +34,7 @@ export default async function AdminOrders() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-display text-2xl font-bold text-ink">Orders</h1>
+        <h1 className="font-sans text-2xl font-bold text-ink">Orders</h1>
         <p className="text-sm text-muted">
           Split into active and completed. Open <span className="font-medium text-ink">Manage</span> on a row to advance
           each product&apos;s status — changes are visible to the customer.

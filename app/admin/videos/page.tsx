@@ -26,15 +26,16 @@ export default async function AdminMedia({ searchParams }: { searchParams: { vso
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="font-display text-2xl font-bold text-ink">Videos &amp; Photos</h1>
+        <h1 className="font-sans text-2xl font-bold text-ink">Videos &amp; Photos</h1>
         <p className="text-sm text-muted">Upload assembly videos and the first-screen photos shown on the homepage.</p>
       </div>
 
+      <div className="grid items-start gap-6 xl:grid-cols-2">
       {/* First-screen photos */}
       <div className="card p-6">
         <div className="flex items-center gap-2">
           <Star className="h-4 w-4 text-brand-sky" />
-          <h2 className="font-display text-lg font-bold text-ink">First-screen photos</h2>
+          <h2 className="font-sans text-lg font-bold text-ink">First-screen photos</h2>
         </div>
         <p className="mt-1 text-sm text-muted">
           Upload one or several images. They flow as a rotating carousel on the homepage hero.
@@ -75,7 +76,7 @@ export default async function AdminMedia({ searchParams }: { searchParams: { vso
 
       {/* Assembly videos */}
       <div className="space-y-4">
-        <h2 className="font-display text-lg font-bold text-ink">Assembly videos</h2>
+        <h2 className="font-sans text-lg font-bold text-ink">Assembly videos</h2>
         <VideoUploader />
         <div className="card overflow-hidden">
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-brand-blue/[0.08] px-6 py-4">
@@ -119,6 +120,7 @@ export default async function AdminMedia({ searchParams }: { searchParams: { vso
             ))}
           </ul>
         </div>
+      </div>
       </div>
     </div>
   );
