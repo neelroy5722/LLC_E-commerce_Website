@@ -316,8 +316,49 @@ async function main() {
     data: buildOrder("VM-1054", [{ sizeKey: "twin", heightKey: "medium", woodKey: "maple", baseDollars: 3700, deltaDollars: 150 }], 4),
   });
 
-  // No seeded reviews: the store has no customers yet, so the About page shows
-  // a genuine empty state and invites the first real review.
+  // Testing reviews so the admin moderation + email flow has data to work with.
+  // John's are tied to his account (so the admin can email him); the others are
+  // guest reviews. Mix of pending / approved / featured to exercise the UI.
+  await prisma.review.createMany({
+    data: [
+      {
+        userId: john.id,
+        orderId: deliveredOrder.id,
+        authorName: "John Rivera",
+        rating: 5,
+        title: "Gave us our floor back",
+        body: "We put the Queen in our guest room and suddenly it's a guest room AND an office. Solid wood, feels like it'll outlast us.",
+        status: "approved",
+        featured: true,
+      },
+      {
+        userId: john.id,
+        orderId: deliveredOrder.id,
+        authorName: "John Rivera",
+        rating: 4,
+        title: "Great unit, plan your ceiling",
+        body: "Measure your ceiling first — the height tool nailed it. Docked one star only because freight scheduling took a couple of calls.",
+        status: "pending",
+        featured: false,
+      },
+      {
+        authorName: "Dana P.",
+        rating: 5,
+        title: "Perfect for a small apartment",
+        body: "I live in a 480 sq ft studio. The Apt.Bed is the only reason I have a real desk and a dresser. Assembly took an afternoon with the videos.",
+        status: "approved",
+        featured: true,
+      },
+      {
+        authorName: "Marcus T.",
+        rating: 4,
+        title: "Dorm game-changer",
+        body: "Furnished my daughter's dorm with the Twin. One piece, everything she needs. Waiting on this to be published!",
+        status: "pending",
+        featured: false,
+      },
+    ],
+  });
 
   console.log("Seed complete ✓");
   console.log("  Admin:    admin@apartmentloftbed.com / admin1234");

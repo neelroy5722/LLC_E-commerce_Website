@@ -11,6 +11,7 @@ import { dollarsToCents } from "@/lib/money";
 import { productPlaceholderSvg } from "@/lib/placeholder";
 import { variantImagePath } from "@/lib/catalog";
 import { deleteMedia } from "@/lib/storage";
+import { sendAdminMessage } from "@/lib/mail";
 
 async function assertAdmin() {
   const su = await getSessionUser();
@@ -409,6 +410,31 @@ export async function deleteReviewAction(formData: FormData) {
   await assertAdmin();
   await prisma.review.deleteMany({ where: { id: String(formData.get("id")) } });
   revalidateReviews();
+}
+
+/** Emails the customer who wrote a review (e.g. to reply or request photos). */
+export async function emailReviewerAction(formData: FormData) {
+  await assertAdmin();
+  const reviewId = String(formData.get("reviewId"));
+  const subject = String(formData.get("subject") || "").trim();
+  const message = String(formData.get("message") || "").trim();
+  if (!subject || !message) return;
+
+  const review = await prisma.review.findUnique({
+    where: { id: reviewId },
+    include: { user: { select: { email: true, name: true } } },
+  });
+  const to = review?.user?.email;
+  if (!to) return; // only reviews tied to a registered customer can be emailed
+  await sendAdminMessage({ to, customerName: review?.user?.name ?? review?.authorName ?? "there", subject, message });
+  revalidatePath("/admin/reviews");
+}
+
+/** Marks all admin notifications as read (clears the top-bar badge). */
+export async function markNotificationsReadAction() {
+  await assertAdmin();
+  await prisma.notification.updateMany({ where: { readAt: null }, data: { readAt: new Date() } });
+  revalidatePath("/admin");
 }
 
 export async function deleteCustomerAction(formData: FormData) {

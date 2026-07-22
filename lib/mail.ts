@@ -96,6 +96,59 @@ export async function sendEmailVerification(data: { email: string; name: string;
   await deliverMail({ to: data.email, subject, text, html, logLabel: `email verification for ${data.email}` });
 }
 
+/** Alerts the store admin that a new (paid) order has come in. */
+export async function sendNewOrderAdminAlert(data: {
+  adminEmail: string;
+  orderNumber: string;
+  customerName: string;
+  customerEmail: string;
+  items: { label: string; quantity: number }[];
+  total: number;
+}): Promise<void> {
+  const subject = `New order ${data.orderNumber} — ${formatCents(data.total)}`;
+  const itemLines = data.items.map((it) => `${it.quantity}× ${it.label}`);
+
+  const text = [
+    `A new order has been placed and paid.`,
+    ``,
+    `Order:    ${data.orderNumber}`,
+    `Customer: ${data.customerName} <${data.customerEmail}>`,
+    `Total:    ${formatCents(data.total)}`,
+    ``,
+    ...itemLines.map((l) => `  ${l}`),
+    ``,
+    `Manage it in the admin dashboard.`,
+  ].join("\n");
+
+  const html = `<div style="font-family:Helvetica,Arial,sans-serif;max-width:560px">
+    <h2 style="color:#1E3A5F;margin:0 0 4px">New order ${escapeHtml(data.orderNumber)}</h2>
+    <p style="color:#374151;margin:0 0 16px">A new order has been placed and paid — <strong>${formatCents(data.total)}</strong>.</p>
+    <p style="color:#374151;margin:0 0 4px"><strong>Customer:</strong> ${escapeHtml(data.customerName)} (${escapeHtml(data.customerEmail)})</p>
+    <ul style="color:#374151;padding-left:18px;margin:8px 0 16px">${itemLines.map((l) => `<li>${escapeHtml(l)}</li>`).join("")}</ul>
+    <p style="color:#6b7280;font-size:13px">Manage this order in the Victory Martin admin dashboard.</p>
+  </div>`;
+
+  await deliverMail({ to: data.adminEmail, subject, text, html, logLabel: `admin alert for order ${data.orderNumber}` });
+}
+
+/** Sends an admin-authored message to a customer (used from the reviews screen). */
+export async function sendAdminMessage(data: {
+  to: string;
+  customerName: string;
+  subject: string;
+  message: string;
+}): Promise<void> {
+  const text = [`Hi ${data.customerName},`, ``, data.message, ``, `— Victory Martin`].join("\n");
+
+  const html = `<div style="font-family:Helvetica,Arial,sans-serif;max-width:560px">
+    <p style="color:#0C1826">Hi ${escapeHtml(data.customerName)},</p>
+    <div style="color:#374151;line-height:1.6;white-space:pre-wrap">${escapeHtml(data.message)}</div>
+    <p style="color:#6b7280;font-size:13px;margin-top:20px">— Victory Martin · apartmentloftbed.com</p>
+  </div>`;
+
+  await deliverMail({ to: data.to, subject: data.subject, text, html, logLabel: `admin message to ${data.to}` });
+}
+
 /**
  * Shared Resend delivery. Sends via the Resend HTTP API when RESEND_API_KEY is
  * set; otherwise logs to the server console so every email flow stays verifiable

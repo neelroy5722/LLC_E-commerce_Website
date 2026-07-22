@@ -1,8 +1,50 @@
 import "server-only";
 import { prisma } from "@/lib/db";
 import { priceCart, type CartLineInput } from "@/lib/pricing";
-import { sendOrderConfirmation } from "@/lib/mail";
+import { sendOrderConfirmation, sendNewOrderAdminAlert } from "@/lib/mail";
+import { formatCents } from "@/lib/money";
 import { ORDER_FLOW, statusIndex } from "@/lib/order-status";
+
+interface OrderForAlert {
+  orderNumber: string;
+  customerName: string;
+  email: string;
+  total: number;
+  items: { label: string; quantity: number }[];
+}
+
+/**
+ * On a new paid order: record a dashboard notification for the admin and email
+ * them an alert. Best-effort — a failure here must never fail the order itself.
+ */
+async function notifyAdminNewOrder(order: OrderForAlert): Promise<void> {
+  const summary = order.items.map((i) => `${i.quantity}× ${i.label}`).join(", ");
+  try {
+    await prisma.notification.create({
+      data: {
+        type: "order",
+        title: `New order ${order.orderNumber}`,
+        body: `${order.customerName} · ${formatCents(order.total)} · ${summary}`,
+        link: "/admin/orders",
+      },
+    });
+  } catch (err) {
+    console.error("[orders] failed to create admin notification:", err);
+  }
+
+  const admin = await prisma.user.findFirst({ where: { role: "admin" }, select: { email: true } });
+  const adminEmail = process.env.ADMIN_EMAIL || admin?.email;
+  if (adminEmail) {
+    await sendNewOrderAdminAlert({
+      adminEmail,
+      orderNumber: order.orderNumber,
+      customerName: order.customerName,
+      customerEmail: order.email,
+      items: order.items,
+      total: order.total,
+    });
+  }
+}
 
 export interface ShippingInfo {
   name: string;
@@ -76,16 +118,18 @@ export async function createOrder(params: {
   });
 
   if (paid) {
+    const items = price.lines.map((l) => ({ label: l.label, quantity: l.quantity }));
     await sendOrderConfirmation({
       orderNumber,
       email: shipping.email,
       customerName: shipping.name,
-      items: price.lines.map((l) => ({ label: l.label, quantity: l.quantity })),
+      items,
       subtotal: price.subtotalCents,
       tax: price.taxCents,
       freight: price.freightCents,
       total: price.totalCents,
     });
+    await notifyAdminNewOrder({ orderNumber, customerName: shipping.name, email: shipping.email, total: price.totalCents, items });
   }
 
   return order;
@@ -103,16 +147,18 @@ export async function markOrderPaid(orderId: string, reference: string) {
     }),
   ]);
 
+  const items = order.items.map((it) => ({ label: it.label, quantity: it.quantity }));
   await sendOrderConfirmation({
     orderNumber: order.orderNumber,
     email: order.email,
     customerName: order.customerName,
-    items: order.items.map((it) => ({ label: it.label, quantity: it.quantity })),
+    items,
     subtotal: order.subtotal,
     tax: order.tax,
     freight: order.freight,
     total: order.total,
   });
+  await notifyAdminNewOrder({ orderNumber: order.orderNumber, customerName: order.customerName, email: order.email, total: order.total, items });
 
   return order;
 }

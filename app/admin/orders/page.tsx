@@ -33,7 +33,8 @@ export default async function AdminOrders() {
       <div>
         <h1 className="font-display text-2xl font-bold text-ink">Orders</h1>
         <p className="text-sm text-muted">
-          Grouped by customer. Each product is tracked and advanced separately — changes are visible to the customer.
+          Split into active and completed. Open <span className="font-medium text-ink">Manage</span> on a row to advance
+          each product&apos;s status — changes are visible to the customer.
         </p>
       </div>
       <AdminOrdersView orders={rows} />

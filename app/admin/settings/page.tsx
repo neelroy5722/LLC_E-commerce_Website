@@ -1,6 +1,7 @@
 import { Save, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { SubmitButton } from "@/components/ui/SubmitButton";
+import { AdminPasswordForm } from "@/components/admin/AdminPasswordForm";
 import { prisma } from "@/lib/db";
 import { getSetting, getFreightCents } from "@/lib/settings";
 import { formatCents } from "@/lib/money";
@@ -26,8 +27,11 @@ export default async function AdminSettings() {
     <div className="space-y-8">
       <div>
         <h1 className="font-display text-2xl font-bold text-ink">Settings</h1>
-        <p className="text-sm text-muted">Freight, sales tax, and the ceiling-height recommendation logic.</p>
+        <p className="text-sm text-muted">Your account, freight, sales tax, and the ceiling-height recommendation logic.</p>
       </div>
+
+      {/* Admin account password */}
+      <AdminPasswordForm />
 
       {/* Freight & tax mode */}
       <form action={updateSettingsAction} className="card p-6">

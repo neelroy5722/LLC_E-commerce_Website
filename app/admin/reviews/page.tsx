@@ -2,10 +2,12 @@ import { Prisma } from "@prisma/client";
 import { Star, Check, X, Trash2, Sparkles } from "lucide-react";
 import { prisma } from "@/lib/db";
 import { SortSelect } from "@/components/admin/SortSelect";
+import { ReviewEmailForm } from "@/components/admin/ReviewEmailForm";
 import {
   setReviewStatusAction,
   toggleReviewFeaturedAction,
   deleteReviewAction,
+  emailReviewerAction,
 } from "../actions";
 
 export const dynamic = "force-dynamic";
@@ -22,7 +24,10 @@ const REVIEW_SORTS: Record<string, ReviewOrderBy> = {
 
 export default async function AdminReviews({ searchParams }: { searchParams: { sort?: string } }) {
   const sort = searchParams.sort && REVIEW_SORTS[searchParams.sort] ? searchParams.sort : "status";
-  const reviews = await prisma.review.findMany({ orderBy: REVIEW_SORTS[sort] });
+  const reviews = await prisma.review.findMany({
+    orderBy: REVIEW_SORTS[sort],
+    include: { user: { select: { email: true } } },
+  });
   const pending = reviews.filter((r) => r.status === "pending");
   const featuredCount = reviews.filter((r) => r.featured && r.status === "approved").length;
 
@@ -97,6 +102,14 @@ export default async function AdminReviews({ searchParams }: { searchParams: { s
                   className="bg-brand-sky/15 text-brand-sky hover:bg-brand-sky/25">
                   <Sparkles className="h-3.5 w-3.5" /> {r.featured ? "Unfeature" : "Feature on About"}
                 </Action>
+                {r.user?.email && (
+                  <ReviewEmailForm
+                    action={emailReviewerAction}
+                    reviewId={r.id}
+                    to={r.user.email}
+                    defaultSubject="About your Apt.Bed review"
+                  />
+                )}
                 <Action action={deleteReviewAction} id={r.id}
                   className="ml-auto bg-brand-red/10 text-brand-red-700 hover:bg-brand-red/20">
                   <Trash2 className="h-3.5 w-3.5" /> Delete
