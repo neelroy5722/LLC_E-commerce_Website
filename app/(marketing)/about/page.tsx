@@ -161,7 +161,7 @@ export default async function AboutPage() {
                 Write a review
               </ButtonLink>
               <p className="mt-3 text-xs text-muted">
-                You&apos;ll need an account so we can verify your purchase.
+                Reviews are open to owners once their Apt.Bed order has been delivered.
               </p>
             </div>
           )}

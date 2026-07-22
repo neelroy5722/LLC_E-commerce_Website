@@ -27,46 +27,55 @@ export default async function AccountReviews() {
             </span>
           )}
         </div>
-        <p className="text-sm text-muted">
-          Share your experience — reviews are published after a quick check by our team.
-        </p>
-        <form action={submitReviewAction} className="mt-6 space-y-5">
-          <div className="grid gap-5 sm:grid-cols-[8rem_1fr]">
-            <div>
-              <label className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-muted">Rating</label>
-              <select
-                name="rating"
-                defaultValue="5"
-                className="w-full rounded-xl border border-brand-blue/12 bg-panel px-3 py-2.5 text-sm text-ink outline-none focus:border-brand-sky"
-              >
-                {[5, 4, 3, 2, 1].map((n) => (
-                  <option key={n} value={n}>
-                    {n} star{n > 1 ? "s" : ""}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-muted">Title</label>
-              <input
-                name="title"
-                placeholder="Sum it up in a few words"
-                className="w-full rounded-xl border border-brand-blue/12 bg-panel px-3 py-2.5 text-sm text-ink outline-none focus:border-brand-sky"
-              />
-            </div>
-          </div>
-          <div>
-            <label className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-muted">Your review</label>
-            <textarea
-              name="body"
-              required
-              rows={4}
-              placeholder="What did you think of your Apt.Bed?"
-              className="w-full rounded-xl border border-brand-blue/12 bg-panel px-3 py-2.5 text-sm text-ink outline-none focus:border-brand-sky"
-            />
-          </div>
-          <SubmitButton size="md" savedLabel="Submitted">Submit review</SubmitButton>
-        </form>
+        {verified ? (
+          <>
+            <p className="text-sm text-muted">
+              Share your experience — reviews are published after a quick check by our team.
+            </p>
+            <form action={submitReviewAction} className="mt-6 space-y-5">
+              <div className="grid gap-5 sm:grid-cols-[8rem_1fr]">
+                <div>
+                  <label className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-muted">Rating</label>
+                  <select
+                    name="rating"
+                    defaultValue="5"
+                    className="w-full rounded-xl border border-brand-blue/12 bg-panel px-3 py-2.5 text-sm text-ink outline-none focus:border-brand-sky"
+                  >
+                    {[5, 4, 3, 2, 1].map((n) => (
+                      <option key={n} value={n}>
+                        {n} star{n > 1 ? "s" : ""}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-muted">Title</label>
+                  <input
+                    name="title"
+                    placeholder="Sum it up in a few words"
+                    className="w-full rounded-xl border border-brand-blue/12 bg-panel px-3 py-2.5 text-sm text-ink outline-none focus:border-brand-sky"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-muted">Your review</label>
+                <textarea
+                  name="body"
+                  required
+                  rows={4}
+                  placeholder="What did you think of your Apt.Bed?"
+                  className="w-full rounded-xl border border-brand-blue/12 bg-panel px-3 py-2.5 text-sm text-ink outline-none focus:border-brand-sky"
+                />
+              </div>
+              <SubmitButton size="md" savedLabel="Submitted">Submit review</SubmitButton>
+            </form>
+          </>
+        ) : (
+          <p className="mt-2 text-sm text-muted">
+            Reviews are open to verified owners. You&apos;ll be able to write one here once one of
+            your Apt.Bed orders is marked <span className="font-medium text-ink">Delivered</span>.
+          </p>
+        )}
       </div>
 
       <div className="card p-6">

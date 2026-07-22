@@ -13,18 +13,18 @@ export async function submitReviewAction(formData: FormData) {
   const rating = Math.min(5, Math.max(1, parseInt(String(formData.get("rating") || "5"), 10) || 5));
   const title = String(formData.get("title") || "").trim() || null;
 
-  // Link a delivered order when the reviewer has one (marks it a verified
-  // purchase) but don't block reviews from signed-in users without one.
+  // Only customers with a delivered order may leave a review (verified purchase).
   const delivered = await prisma.order.findFirst({
     where: { userId: su.id, status: "delivered" },
     select: { id: true },
   });
+  if (!delivered) return;
   const user = await prisma.user.findUnique({ where: { id: su.id } });
 
   await prisma.review.create({
     data: {
       userId: su.id,
-      orderId: delivered?.id ?? null,
+      orderId: delivered.id,
       authorName: user?.name ?? "Customer",
       rating,
       title,
