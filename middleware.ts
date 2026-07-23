@@ -31,10 +31,13 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  // The admin area additionally requires the admin role. A signed-in customer
-  // (e.g. someone who registered through the general sign-up page) can never
-  // reach the dashboard — send them to their own account page instead.
-  if (isAdminRoute && token.role !== "admin") {
+  // The admin area additionally requires the "admin" capability. A signed-in
+  // customer (e.g. someone who registered through the general sign-up page) has
+  // only the "customer" role and can never reach the dashboard — send them to
+  // their own account page instead. (Fallback to the legacy single role for
+  // sessions issued before roles[] existed.)
+  const roles = (token.roles as string[] | undefined) ?? (token.role === "admin" ? ["admin", "customer"] : ["customer"]);
+  if (isAdminRoute && !roles.includes("admin")) {
     const url = req.nextUrl.clone();
     url.pathname = "/account";
     url.search = "";

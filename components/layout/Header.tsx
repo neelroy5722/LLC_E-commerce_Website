@@ -17,7 +17,7 @@ export function Header() {
   const headerRef = useRef<HTMLElement>(null);
   const { data: session, status } = useSession();
   const signedIn = status === "authenticated";
-  const isAdmin = session?.user?.role === "admin";
+  const isAdmin = session?.user?.roles?.includes("admin") ?? session?.user?.role === "admin";
   const accountHref = isAdmin ? "/admin" : "/account";
 
   const isActive = (href: string) =>

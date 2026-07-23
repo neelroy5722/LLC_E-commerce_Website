@@ -35,6 +35,11 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "An account with that email already exists." }, { status: 409 });
   }
 
+  // Every account created here is a plain customer — the request body has no
+  // "role" field and this endpoint always writes role: "customer". There is no
+  // way to obtain admin access through the general sign-up page, even with an
+  // email that is meant for an administrator; admins are provisioned only in
+  // the database.
   const passwordHash = await bcrypt.hash(parsed.data.password, 10);
   const user = await prisma.user.create({
     data: { email, passwordHash, name: parsed.data.name.trim(), role: "customer" },

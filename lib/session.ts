@@ -24,10 +24,11 @@ export async function requireUser(returnTo = "/account") {
   return su;
 }
 
-/** Require an admin; redirect non-admins. */
+/** Require the admin capability; redirect non-admins to their account. */
 export async function requireAdmin() {
   const su = await getSessionUser();
   if (!su?.id) redirect(`/login?callbackUrl=${encodeURIComponent("/admin")}`);
-  if (su.role !== "admin") redirect("/account");
+  const isAdmin = su.roles ? su.roles.includes("admin") : su.role === "admin";
+  if (!isAdmin) redirect("/account");
   return su;
 }
