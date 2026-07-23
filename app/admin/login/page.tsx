@@ -44,7 +44,7 @@ export default function AdminLoginPage() {
 
   return (
     <AdminAuthShell heading="WELCOME BACK" sub="Admin dashboard">
-      <div className="mb-6">
+      <div className="mb-6 text-center">
         <h2 className="font-sans text-2xl font-bold text-ink">Admin sign in</h2>
         <p className="mt-1 text-sm text-muted">Sign in to manage the Apt.Bed store.</p>
       </div>
