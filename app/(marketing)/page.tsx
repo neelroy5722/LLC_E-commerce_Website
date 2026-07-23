@@ -23,7 +23,7 @@ export default async function HomePage() {
   return (
     <>
       {/* ── RED band: hero ───────────────────────────────── */}
-      <section className="relative overflow-hidden bg-[radial-gradient(135%_125%_at_12%_-15%,#F08BA0_0%,#EB6A85_47%,#C0475F_100%)] text-white">
+      <section className="relative overflow-hidden bg-[radial-gradient(135%_125%_at_12%_-15%,#5C3D18_0%,#3B1E08_47%,#241205_100%)] text-white">
         <div className="pointer-events-none absolute -right-40 -top-40 h-96 w-96 rounded-full bg-white/[0.06] blur-3xl" />
         <div className="container relative grid items-center gap-12 py-20 sm:py-28 lg:grid-cols-[1.1fr_0.9fr] lg:gap-12 lg:py-32">
           <div>

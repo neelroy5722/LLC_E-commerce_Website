@@ -17,7 +17,7 @@ export function CartButton({ onClick }: { onClick?: () => void }) {
     >
       <ShoppingCart className="h-5 w-5" />
       {count > 0 && (
-        <span className="absolute -right-0.5 -top-0.5 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-red px-1 text-[11px] font-bold text-white">
+        <span className="absolute -right-0.5 -top-0.5 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-red px-1 text-[11px] font-bold text-brand-blue-900">
           {count}
         </span>
       )}

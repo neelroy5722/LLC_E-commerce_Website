@@ -83,7 +83,7 @@ function LoginForm() {
 
       <form onSubmit={onSubmit} className="card space-y-4 p-6 sm:p-7">
         {error && (
-          <div className="flex items-start gap-2 rounded-xl bg-brand-red/15 p-3 text-sm text-brand-red-200">
+          <div className="flex items-start gap-2 rounded-xl bg-brand-red/15 p-3 text-sm text-brand-red-800">
             <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
             {error}
           </div>
@@ -93,7 +93,7 @@ function LoginForm() {
             <p className="flex items-start gap-2">
               <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-brand-sky" />
               This is an administrator account. Please sign in from the{" "}
-              <Link href="/admin/login" className="font-medium text-brand-red-300 hover:underline">
+              <Link href="/admin/login" className="font-medium text-brand-red-700 hover:underline">
                 admin sign-in page
               </Link>
               .
@@ -115,7 +115,7 @@ function LoginForm() {
                 type="button"
                 onClick={resendVerification}
                 disabled={resendState === "sending" || !email}
-                className="mt-2 pl-6 text-xs font-medium text-brand-red-300 hover:underline disabled:opacity-60"
+                className="mt-2 pl-6 text-xs font-medium text-brand-red-700 hover:underline disabled:opacity-60"
               >
                 {resendState === "sending" ? "Sending…" : "Resend verification email"}
               </button>
@@ -126,7 +126,7 @@ function LoginForm() {
         <div>
           <div className="mb-1.5 flex items-center justify-between">
             <label className="block text-sm font-medium text-ink">Password</label>
-            <Link href="/forgot-password" className="text-xs font-medium text-brand-red-300 hover:underline">
+            <Link href="/forgot-password" className="text-xs font-medium text-brand-red-700 hover:underline">
               Forgot password?
             </Link>
           </div>
@@ -139,7 +139,7 @@ function LoginForm() {
 
       <p className="mt-5 text-center text-sm text-muted">
         New here?{" "}
-        <Link href="/register" className="font-medium text-brand-red-300 hover:underline">
+        <Link href="/register" className="font-medium text-brand-red-700 hover:underline">
           Create an account
         </Link>
       </p>

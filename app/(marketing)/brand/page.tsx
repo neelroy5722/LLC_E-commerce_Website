@@ -182,7 +182,7 @@ export default function BrandPage() {
             <div className="grid gap-5 md:grid-cols-3">
               {PRINCIPLES.map((p) => (
                 <div key={p.title} className="rounded-2xl border border-brand-blue/[0.08] bg-panel p-6">
-                  <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-brand-red/15 text-brand-red">
+                  <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-brand-red/15 text-brand-red-700">
                     <p.icon className="h-5 w-5" />
                   </span>
                   <h3 className="mt-4 font-display text-lg font-bold text-ink">{p.title}</h3>

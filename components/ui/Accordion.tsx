@@ -30,7 +30,7 @@ export function Accordion({ items }: { items: AccordionItem[] }) {
               </span>
               <ChevronDown
                 className={cn(
-                  "h-5 w-5 shrink-0 text-brand-red transition-transform duration-300",
+                  "h-5 w-5 shrink-0 text-brand-red-700 transition-transform duration-300",
                   isOpen && "rotate-180",
                 )}
               />

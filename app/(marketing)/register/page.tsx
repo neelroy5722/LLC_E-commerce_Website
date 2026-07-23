@@ -57,7 +57,7 @@ export default function RegisterPage() {
 
         <form onSubmit={onSubmit} className="card space-y-4 p-6 sm:p-7">
           {error && (
-            <div className="flex items-start gap-2 rounded-xl bg-brand-red/15 p-3 text-sm text-brand-red-200">
+            <div className="flex items-start gap-2 rounded-xl bg-brand-red/15 p-3 text-sm text-brand-red-800">
               <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
               {error}
             </div>
@@ -79,7 +79,7 @@ export default function RegisterPage() {
 
         <p className="mt-5 text-center text-sm text-muted">
           Already have an account?{" "}
-          <Link href="/login" className="font-medium text-brand-red-300 hover:underline">
+          <Link href="/login" className="font-medium text-brand-red-700 hover:underline">
             Sign in
           </Link>
         </p>

@@ -31,7 +31,7 @@ export default function ProductPage() {
             const Icon = pieceIcons[i];
             return (
               <div key={piece.name} className="flex items-start gap-3.5 text-left">
-                <span className="mt-0.5 inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-brand-red/10 text-brand-red">
+                <span className="mt-0.5 inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-brand-red/10 text-brand-red-700">
                   <Icon className="h-5 w-5" />
                 </span>
                 <div>

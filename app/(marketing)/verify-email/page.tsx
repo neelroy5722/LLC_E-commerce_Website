@@ -70,12 +70,12 @@ function VerifyInner() {
 
   return (
     <div className="card space-y-3 p-6 text-center sm:p-7">
-      <AlertCircle className="mx-auto h-8 w-8 text-brand-red-300" />
+      <AlertCircle className="mx-auto h-8 w-8 text-brand-red-700" />
       <h2 className="font-display text-xl font-semibold text-ink">Verification failed</h2>
       <p className="text-sm text-muted">{message}</p>
       <p className="text-xs text-muted">
         Need a new link?{" "}
-        <Link href="/login" className="font-medium text-brand-red-300 hover:underline">
+        <Link href="/login" className="font-medium text-brand-red-700 hover:underline">
           Sign in
         </Link>{" "}
         and we&apos;ll offer to resend it.

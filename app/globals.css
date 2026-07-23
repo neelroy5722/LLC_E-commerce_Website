@@ -7,7 +7,7 @@
     scroll-behavior: smooth;
   }
   body {
-    @apply bg-white text-ink antialiased;
+    @apply bg-night text-ink antialiased;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11", "ss01";
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
@@ -34,11 +34,11 @@
 
   /* Eyebrow label — restrained, modern */
   .eyebrow {
-    @apply inline-flex items-center gap-2.5 text-[0.7rem] font-bold uppercase tracking-[0.2em] text-brand-red;
+    @apply inline-flex items-center gap-2.5 text-[0.7rem] font-bold uppercase tracking-[0.2em] text-brand-red-700;
   }
   .eyebrow::before {
     content: "";
-    @apply inline-block h-px w-6 bg-brand-red/45;
+    @apply inline-block h-px w-6 bg-brand-red-600/60;
   }
   /* Eyebrow on coloured (red/blue) bands */
   .eyebrow-on-color {

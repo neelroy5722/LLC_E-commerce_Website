@@ -31,7 +31,7 @@ export default async function AboutPage() {
   return (
     <>
       {/* Red headline band */}
-      <section className="relative overflow-hidden bg-[radial-gradient(135%_130%_at_12%_-20%,#F08BA0_0%,#EB6A85_48%,#C0475F_100%)] text-white">
+      <section className="relative overflow-hidden bg-[radial-gradient(135%_130%_at_12%_-20%,#5C3D18_0%,#3B1E08_48%,#241205_100%)] text-white">
         <div className="container relative py-16 sm:py-20">
           <span className="eyebrow-on-color">Our Story</span>
           <h1 className="display-hero mt-4 max-w-3xl text-4xl text-white sm:text-5xl">
@@ -104,7 +104,7 @@ export default async function AboutPage() {
             </div>
             <p className="mt-4 text-center text-xs text-muted">
               Questions first?{" "}
-              <Link href="/contact" className="text-brand-red underline underline-offset-2">
+              <Link href="/contact" className="text-brand-red-700 underline underline-offset-2">
                 Talk to us
               </Link>
             </p>
@@ -126,7 +126,7 @@ export default async function AboutPage() {
             <div className="mx-auto mt-10 grid max-w-5xl gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {reviews.map((r) => (
                 <figure key={r.id} className="card flex flex-col p-6">
-                  <div className="flex items-center gap-0.5 text-brand-red">
+                  <div className="flex items-center gap-0.5 text-brand-red-700">
                     {Array.from({ length: 5 }).map((_, i) => (
                       <Star
                         key={i}

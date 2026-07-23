@@ -57,7 +57,7 @@ export default async function AssemblyPage() {
                       className="absolute inset-0 h-full w-full"
                     />
                   )}
-                  <span className="pointer-events-none absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-brand-red px-2.5 py-1 text-xs font-medium text-white">
+                  <span className="pointer-events-none absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-brand-red px-2.5 py-1 text-xs font-medium text-brand-blue-900">
                     <Play className="h-3 w-3 fill-current" /> Step {i + 1}
                   </span>
                 </div>

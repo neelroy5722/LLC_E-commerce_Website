@@ -43,7 +43,7 @@ export default function ContactPage() {
               </div>
               <p className="mt-5 border-t border-brand-blue/[0.08] pt-4 text-xs text-muted">
                 We reply within one business day. Prefer to browse first?{" "}
-                <Link href="/faq" className="text-brand-red underline underline-offset-2">
+                <Link href="/faq" className="text-brand-red-700 underline underline-offset-2">
                   Read the FAQ
                 </Link>
                 .

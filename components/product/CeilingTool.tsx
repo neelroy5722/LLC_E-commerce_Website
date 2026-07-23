@@ -28,7 +28,7 @@ export function CeilingTool({ className }: { className?: string }) {
   return (
     <div className={cn("card p-6 sm:p-8", className)}>
       <div className="flex items-center gap-2.5">
-        <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-brand-red/10 text-brand-red">
+        <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-brand-red/10 text-brand-red-700">
           <Ruler className="h-5 w-5" />
         </span>
         <div>
@@ -50,7 +50,7 @@ export function CeilingTool({ className }: { className?: string }) {
         <NumberField label="Inches" value={inches} onChange={setInches} min={0} max={11} />
         <button
           type="submit"
-          className="inline-flex h-11 shrink-0 items-center gap-2 rounded-xl bg-brand-red px-5 text-sm font-semibold text-white shadow-glow transition-colors hover:bg-brand-red-600"
+          className="inline-flex h-11 shrink-0 items-center gap-2 rounded-xl bg-brand-red px-5 text-sm font-semibold text-brand-blue-900 shadow-glow transition-colors hover:bg-brand-red-600"
         >
           Recommend <ArrowRight className="h-4 w-4" />
         </button>
@@ -68,7 +68,7 @@ export function CeilingTool({ className }: { className?: string }) {
           </div>
         ) : submitted && rec ? (
           <div className="rounded-2xl border border-brand-red/20 bg-brand-red/[0.06] p-5">
-            <p className="text-xs font-semibold uppercase tracking-wide text-brand-red">
+            <p className="text-xs font-semibold uppercase tracking-wide text-brand-red-700">
               Recommended deck height
             </p>
             <div className="mt-1 flex items-baseline gap-2">

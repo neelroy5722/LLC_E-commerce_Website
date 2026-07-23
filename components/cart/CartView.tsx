@@ -48,7 +48,7 @@ export function CartView({ catalog, freightCents }: { catalog: Catalog; freightC
   if (items.length === 0) {
     return (
       <div className="card mx-auto max-w-lg p-10 text-center">
-        <span className="mx-auto inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-red/10 text-brand-red">
+        <span className="mx-auto inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-red/10 text-brand-red-700">
           <ShoppingCart className="h-7 w-7" />
         </span>
         <h2 className="mt-4 font-display text-xl font-bold text-ink">Your cart is empty</h2>

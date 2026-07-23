@@ -61,7 +61,7 @@ export function DashboardNav({ variant }: { variant: "admin" | "account" }) {
             className={cn(
               "flex shrink-0 items-center gap-2.5 rounded-xl px-3.5 py-2.5 text-sm font-medium transition-colors",
               active
-                ? "bg-brand-red/10 text-brand-red"
+                ? "bg-brand-red/10 text-brand-red-700"
                 : "text-ink/70 hover:bg-brand-blue/5 hover:text-brand-blue-700",
             )}
           >

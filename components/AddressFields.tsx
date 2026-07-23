@@ -121,7 +121,7 @@ function Label({ children, required }: { children: React.ReactNode; required?: b
   return (
     <label className="mb-1.5 block text-sm font-medium text-ink">
       {children}
-      {required && <span className="text-brand-red"> *</span>}
+      {required && <span className="text-brand-red-700"> *</span>}
     </label>
   );
 }

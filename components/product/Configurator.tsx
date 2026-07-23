@@ -167,7 +167,7 @@ export function Configurator() {
             <button
               type="button"
               onClick={buyNow}
-              className="flex flex-1 items-center justify-center gap-2 rounded-full bg-brand-red px-6 py-3.5 text-sm font-semibold text-white shadow-glow transition-colors hover:bg-brand-red-600"
+              className="flex flex-1 items-center justify-center gap-2 rounded-full bg-brand-red px-6 py-3.5 text-sm font-semibold text-brand-blue-900 shadow-glow transition-colors hover:bg-brand-red-600"
             >
               Buy now <ArrowRight className="h-4 w-4" />
             </button>
@@ -206,7 +206,7 @@ function Field({
     <div className="mt-8">
       <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1.5">
         <div className="flex items-center gap-2.5">
-          <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-brand-red/10 text-xs font-bold text-brand-red">
+          <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-brand-red/10 text-xs font-bold text-brand-red-700">
             {step}
           </span>
           <h2 className="font-display text-lg font-semibold text-ink">{title}</h2>

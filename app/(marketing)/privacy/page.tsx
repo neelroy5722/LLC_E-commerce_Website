@@ -32,7 +32,7 @@ export default function PrivacyPage() {
           </Block>
           <Block title="Contact">
             Questions about privacy? Email{" "}
-            <a className="text-brand-red underline underline-offset-2" href={`mailto:${SITE.email}`}>
+            <a className="text-brand-red-700 underline underline-offset-2" href={`mailto:${SITE.email}`}>
               {SITE.email}
             </a>
             .

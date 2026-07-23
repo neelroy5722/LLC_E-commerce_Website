@@ -203,7 +203,7 @@ function Field({
     <div>
       <label className="mb-1.5 block text-sm font-medium text-ink">
         {label}
-        {required && <span className="text-brand-red"> *</span>}
+        {required && <span className="text-brand-red-700"> *</span>}
       </label>
       <input
         type={type}

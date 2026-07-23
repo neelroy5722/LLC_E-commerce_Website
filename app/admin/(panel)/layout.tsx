@@ -47,7 +47,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             >
               <Bell className="h-4 w-4" />
               {unread > 0 && (
-                <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-brand-red px-1 text-[10px] font-bold text-white">
+                <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-brand-red px-1 text-[10px] font-bold text-brand-blue-900">
                   {unread > 9 ? "9+" : unread}
                 </span>
               )}

@@ -39,7 +39,7 @@ export default function ShippingPage() {
         <div className="grid gap-6 md:grid-cols-3">
           {POINTS.map((p) => (
             <div key={p.title} className="card p-6">
-              <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-brand-red/10 text-brand-red">
+              <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-brand-red/10 text-brand-red-700">
                 <p.icon className="h-5 w-5" />
               </span>
               <h3 className="mt-4 font-semibold text-ink">{p.title}</h3>

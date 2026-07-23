@@ -55,7 +55,7 @@ export default function ForgotPasswordPage() {
               <button
                 type="button"
                 onClick={() => setSent(false)}
-                className="font-medium text-brand-red-300 hover:underline"
+                className="font-medium text-brand-red-700 hover:underline"
               >
                 try again
               </button>
@@ -65,7 +65,7 @@ export default function ForgotPasswordPage() {
         ) : (
           <form onSubmit={onSubmit} className="card space-y-4 p-6 sm:p-7">
             {error && (
-              <div className="flex items-start gap-2 rounded-xl bg-brand-red/15 p-3 text-sm text-brand-red-200">
+              <div className="flex items-start gap-2 rounded-xl bg-brand-red/15 p-3 text-sm text-brand-red-800">
                 <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
                 {error}
               </div>
@@ -90,7 +90,7 @@ export default function ForgotPasswordPage() {
 
         <p className="mt-5 text-center text-sm text-muted">
           Remembered it?{" "}
-          <Link href="/login" className="font-medium text-brand-red-300 hover:underline">
+          <Link href="/login" className="font-medium text-brand-red-700 hover:underline">
             Back to sign in
           </Link>
         </p>

@@ -15,7 +15,7 @@ export function LogoMark({
   inverse?: boolean;
 }) {
   const leftWing = inverse ? "#FFFFFF" : "#D9506E";
-  const rightWing = inverse ? "#FFFFFF" : "#EB6A85";
+  const rightWing = inverse ? "#FFFFFF" : "#3B1E08";
   const head = inverse ? "#FFFFFF" : "#2F5987";
   return (
     <svg
@@ -53,7 +53,7 @@ export function Logo({
             inverse ? "text-white" : "text-brand-blue-700",
           )}
         >
-          APT<span className="text-brand-red">.</span>BED
+          APT<span className="text-brand-red-700">.</span>BED
         </span>
         <span
           className={cn(
@@ -94,7 +94,7 @@ export function LogoStamp({ tone = "dark" }: { tone?: "dark" | "light" }) {
           light ? "text-brand-blue-700" : "text-white",
         )}
       >
-        APT<span className="text-brand-red">.</span>BED
+        APT<span className="text-brand-red-700">.</span>BED
       </p>
       <span className={cn("mt-2.5 h-px w-14", light ? "bg-brand-blue/15" : "bg-white/20")} />
       <p

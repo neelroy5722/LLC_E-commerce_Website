@@ -65,7 +65,7 @@ function ResetForm() {
   if (!token) {
     return (
       <div className="card space-y-3 p-6 text-center sm:p-7">
-        <AlertCircle className="mx-auto h-8 w-8 text-brand-red-300" />
+        <AlertCircle className="mx-auto h-8 w-8 text-brand-red-700" />
         <h2 className="font-display text-xl font-semibold text-ink">Invalid reset link</h2>
         <p className="text-sm text-muted">
           This link is missing its token. Please request a new password-reset email.
@@ -80,7 +80,7 @@ function ResetForm() {
   return (
     <form onSubmit={onSubmit} className="card space-y-4 p-6 sm:p-7">
       {error && (
-        <div className="flex items-start gap-2 rounded-xl bg-brand-red/15 p-3 text-sm text-brand-red-200">
+        <div className="flex items-start gap-2 rounded-xl bg-brand-red/15 p-3 text-sm text-brand-red-800">
           <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
           {error}
         </div>

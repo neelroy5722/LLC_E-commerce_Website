@@ -57,8 +57,8 @@ export function StatusTimeline({ statusIndex }: { statusIndex: number }) {
             <span
               className={cn(
                 "relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full ring-4 ring-panel",
-                done && "bg-brand-red text-white",
-                active && "bg-brand-red text-white shadow-glow",
+                done && "bg-brand-red text-brand-blue-900",
+                active && "bg-brand-red text-brand-blue-900 shadow-glow",
                 !done && !active && "bg-panel2 text-muted ring-panel",
               )}
             >

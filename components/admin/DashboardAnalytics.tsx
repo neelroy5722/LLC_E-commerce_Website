@@ -307,14 +307,14 @@ export function DashboardAnalytics({ data }: { data: DashboardData }) {
             >
               <defs>
                 <linearGradient id="rev-fill" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#E85A4F" stopOpacity="0.18" />
-                  <stop offset="100%" stopColor="#E85A4F" stopOpacity="0" />
+                  <stop offset="0%" stopColor="#F5CC00" stopOpacity="0.28" />
+                  <stop offset="100%" stopColor="#F5CC00" stopOpacity="0" />
                 </linearGradient>
               </defs>
 
               {ticks.map((t) => (
                 <g key={`h-${t.f}`}>
-                  <line x1={padL} y1={t.yy} x2={W - padR} y2={t.yy} stroke="#1B3454" strokeOpacity="0.12" />
+                  <line x1={padL} y1={t.yy} x2={W - padR} y2={t.yy} stroke="#3B1E08" strokeOpacity="0.12" />
                   <text x={padL - 8} y={t.yy + 3} textAnchor="end" className="fill-current text-[10px] text-muted">
                     ${Math.round(t.v / 100)}
                   </text>
@@ -324,14 +324,14 @@ export function DashboardAnalytics({ data }: { data: DashboardData }) {
               {pts.length > 0 && (
                 <>
                   <path d={areaPath} fill="url(#rev-fill)" />
-                  <path d={linePath} fill="none" stroke="#E85A4F" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+                  <path d={linePath} fill="none" stroke="#C29E00" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
                 </>
               )}
 
               {hover !== null && (
                 <g>
-                  <line x1={x(hover)} y1={padT} x2={x(hover)} y2={CHART_BOTTOM} stroke="#1B3454" strokeOpacity="0.25" />
-                  <circle cx={x(hover)} cy={y(view.series[hover])} r="3.5" fill="#E85A4F" stroke="#fff" strokeWidth="1.5" />
+                  <line x1={x(hover)} y1={padT} x2={x(hover)} y2={CHART_BOTTOM} stroke="#3B1E08" strokeOpacity="0.25" />
+                  <circle cx={x(hover)} cy={y(view.series[hover])} r="3.5" fill="#C29E00" stroke="#fff" strokeWidth="1.5" />
                 </g>
               )}
 

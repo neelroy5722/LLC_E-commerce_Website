@@ -11,7 +11,7 @@ const base =
 
 const variants: Record<ButtonVariant, string> = {
   primary:
-    "bg-gradient-to-b from-brand-red-400 to-brand-red-600 text-white shadow-glow ring-1 ring-inset ring-white/10 hover:from-brand-red-500 hover:to-brand-red-700",
+    "bg-gradient-to-b from-brand-red-400 to-brand-red-600 text-brand-blue-900 shadow-glow ring-1 ring-inset ring-black/5 hover:from-brand-red-300 hover:to-brand-red-500",
   secondary: "bg-brand-blue text-white hover:bg-brand-blue-700",
   outline: "border border-brand-blue/25 text-brand-blue-700 hover:bg-brand-blue/5",
   ghost: "text-brand-blue-700 hover:bg-brand-blue/5",
