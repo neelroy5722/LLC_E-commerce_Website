@@ -17,6 +17,7 @@ function LoginForm() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [needsVerify, setNeedsVerify] = useState(false);
+  const [adminPortal, setAdminPortal] = useState(false);
   const [resendState, setResendState] = useState<"idle" | "sending" | "sent">("idle");
 
   async function onSubmit(e: React.FormEvent) {
@@ -24,14 +25,18 @@ function LoginForm() {
     setLoading(true);
     setError(null);
     setNeedsVerify(false);
-    const res = await signIn("credentials", { email, password, redirect: false });
+    setAdminPortal(false);
+    const res = await signIn("credentials", { email, password, portal: "user", redirect: false });
     if (res?.error) {
       setLoading(false);
-      // authorize() throws "EMAIL_NOT_VERIFIED" for accounts that haven't
-      // confirmed their email; everything else is a bad credential.
+      // authorize() throws "EMAIL_NOT_VERIFIED" for unverified accounts and
+      // "ADMIN_PORTAL_REQUIRED" for admins using the customer page; everything
+      // else is a bad credential.
       if (res.error.includes("EMAIL_NOT_VERIFIED")) {
         setNeedsVerify(true);
         setResendState("idle");
+      } else if (res.error.includes("ADMIN_PORTAL_REQUIRED")) {
+        setAdminPortal(true);
       } else {
         setError("Incorrect email or password.");
       }
@@ -81,6 +86,18 @@ function LoginForm() {
           <div className="flex items-start gap-2 rounded-xl bg-brand-red/15 p-3 text-sm text-brand-red-200">
             <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
             {error}
+          </div>
+        )}
+        {adminPortal && (
+          <div className="rounded-xl bg-brand-blue/[0.06] p-3 text-sm text-ink">
+            <p className="flex items-start gap-2">
+              <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-brand-sky" />
+              This is an administrator account. Please sign in from the{" "}
+              <Link href="/admin/login" className="font-medium text-brand-red-300 hover:underline">
+                admin sign-in page
+              </Link>
+              .
+            </p>
           </div>
         )}
         {needsVerify && (

@@ -21,7 +21,7 @@ export default function AdminLoginPage() {
     setLoading(true);
     setError(null);
 
-    const res = await signIn("credentials", { email, password, redirect: false });
+    const res = await signIn("credentials", { email, password, portal: "admin", redirect: false });
     if (res?.error) {
       setLoading(false);
       setError(res.error.includes("EMAIL_NOT_VERIFIED") ? "Please verify your email first." : "Incorrect email or password.");

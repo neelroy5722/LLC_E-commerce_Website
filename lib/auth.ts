@@ -22,6 +22,9 @@ export const authOptions: NextAuthOptions = {
       credentials: {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
+        // "admin" when the request comes from the admin sign-in page, otherwise
+        // the general (customer) portal. Used to keep admins off the user page.
+        portal: { label: "Portal", type: "text" },
       },
       async authorize(credentials) {
         const email = credentials?.email?.toLowerCase().trim();
@@ -37,6 +40,12 @@ export const authOptions: NextAuthOptions = {
         // Require a verified email before allowing sign-in. The thrown message
         // is surfaced to the login page so it can offer to resend the link.
         if (!user.emailVerifiedAt) throw new Error("EMAIL_NOT_VERIFIED");
+
+        // Admins must authenticate through the admin sign-in page. Reject an
+        // admin account that tries to sign in from the general (user) portal.
+        if (credentials?.portal !== "admin" && user.role === "admin") {
+          throw new Error("ADMIN_PORTAL_REQUIRED");
+        }
 
         return { id: user.id, email: user.email, name: user.name, role: user.role, roles: rolesFor(user.role) };
       },
