@@ -1,13 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { Mail, X } from "lucide-react";
+import { Mail } from "lucide-react";
+import { Modal } from "@/components/admin/Modal";
 import { SubmitButton } from "@/components/ui/SubmitButton";
 
-/**
- * A collapsible "Email customer" control for the admin reviews list. Expands to
- * a subject + message form that submits via the passed server action.
- */
+const field =
+  "w-full rounded-xl border border-brand-blue/12 bg-panel px-3 py-2.5 text-sm text-ink outline-none focus:border-brand-sky";
+
+/** Opens a centered modal to email the customer who wrote a single review. */
 export function ReviewEmailForm({
   action,
   reviewId,
@@ -21,8 +22,8 @@ export function ReviewEmailForm({
 }) {
   const [open, setOpen] = useState(false);
 
-  if (!open) {
-    return (
+  return (
+    <>
       <button
         type="button"
         onClick={() => setOpen(true)}
@@ -30,37 +31,25 @@ export function ReviewEmailForm({
       >
         <Mail className="h-3.5 w-3.5" /> Email customer
       </button>
-    );
-  }
 
-  return (
-    <form action={action} className="mt-2 w-full space-y-2 rounded-xl border border-brand-blue/[0.1] bg-panel p-3">
-      <div className="flex items-center justify-between">
-        <p className="text-xs font-medium text-muted">
-          To: <span className="text-ink/80">{to}</span>
+      <Modal open={open} onClose={() => setOpen(false)} title="Email customer">
+        <p className="mb-4 text-sm text-muted">
+          To <span className="font-medium text-ink">{to}</span>
         </p>
-        <button type="button" onClick={() => setOpen(false)} aria-label="Cancel" className="text-muted hover:text-ink">
-          <X className="h-4 w-4" />
-        </button>
-      </div>
-      <input type="hidden" name="reviewId" value={reviewId} />
-      <input
-        name="subject"
-        defaultValue={defaultSubject}
-        required
-        placeholder="Subject"
-        className="w-full rounded-lg border border-brand-blue/12 bg-night px-2.5 py-1.5 text-sm text-ink outline-none focus:border-brand-sky"
-      />
-      <textarea
-        name="message"
-        required
-        rows={3}
-        placeholder="Write your message to the customer…"
-        className="w-full rounded-lg border border-brand-blue/12 bg-night px-2.5 py-1.5 text-sm text-ink outline-none focus:border-brand-sky"
-      />
-      <SubmitButton size="sm" savedLabel="Sent">
-        <Mail className="h-4 w-4" /> Send email
-      </SubmitButton>
-    </form>
+        <form action={action} className="space-y-3">
+          <input type="hidden" name="reviewId" value={reviewId} />
+          <input name="subject" defaultValue={defaultSubject} required placeholder="Subject" className={field} />
+          <textarea name="message" required rows={6} placeholder="Write your message to the customer…" className={field} />
+          <div className="flex items-center justify-end gap-2 pt-1">
+            <button type="button" onClick={() => setOpen(false)} className="rounded-full px-4 py-2 text-sm font-medium text-muted hover:text-ink">
+              Cancel
+            </button>
+            <SubmitButton size="md" savingLabel="Sending…" savedLabel="Sent">
+              <Mail className="h-4 w-4" /> Send email
+            </SubmitButton>
+          </div>
+        </form>
+      </Modal>
+    </>
   );
 }

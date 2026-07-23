@@ -2,7 +2,7 @@ import { Plus, Megaphone, Save } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { FaqItem } from "@/components/admin/FaqItem";
 import { prisma } from "@/lib/db";
-import { upsertFaqAction, deleteFaqAction, saveAnnouncementAction } from "../actions";
+import { upsertFaqAction, deleteFaqAction, saveAnnouncementAction } from "@/app/admin/actions";
 
 export const dynamic = "force-dynamic";
 
@@ -13,13 +13,12 @@ export default async function AdminContent() {
   ]);
 
   return (
-    <div className="space-y-8">
+    <div className="mx-auto w-full max-w-5xl space-y-8 px-1 sm:px-4">
       <div>
         <h1 className="font-sans text-2xl font-bold text-ink">Content management</h1>
         <p className="text-sm text-muted">Edit FAQs and the site announcement.</p>
       </div>
 
-      <div className="grid items-start gap-6 xl:grid-cols-2">
       {/* Announcement */}
       <form action={saveAnnouncementAction} className="card p-6">
         <div className="flex items-center gap-2">
@@ -67,7 +66,6 @@ export default async function AdminContent() {
           />
           <Button type="submit" size="sm" className="h-8 px-3 text-xs">Add FAQ</Button>
         </form>
-      </div>
       </div>
     </div>
   );

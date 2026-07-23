@@ -1,13 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { Mail, X } from "lucide-react";
+import { Mail } from "lucide-react";
+import { Modal } from "@/components/admin/Modal";
 import { SubmitButton } from "@/components/ui/SubmitButton";
 
-/**
- * "Email all reviewers" — expands to a subject + message form that the admin
- * can send to every customer who has left a review (submitted via the action).
- */
+const field =
+  "w-full rounded-xl border border-brand-blue/12 bg-panel px-3 py-2.5 text-sm text-ink outline-none focus:border-brand-sky";
+
+/** Opens a centered modal to email every customer who has left a review. */
 export function BulkReviewEmailForm({
   action,
   count,
@@ -17,8 +18,8 @@ export function BulkReviewEmailForm({
 }) {
   const [open, setOpen] = useState(false);
 
-  if (!open) {
-    return (
+  return (
+    <>
       <button
         type="button"
         onClick={() => setOpen(true)}
@@ -26,33 +27,22 @@ export function BulkReviewEmailForm({
       >
         <Mail className="h-4 w-4" /> Email all reviewers ({count})
       </button>
-    );
-  }
 
-  return (
-    <form action={action} className="card w-full space-y-3 p-5">
-      <div className="flex items-center justify-between">
-        <h2 className="font-sans text-base font-bold text-ink">Email all reviewers ({count})</h2>
-        <button type="button" onClick={() => setOpen(false)} aria-label="Cancel" className="text-muted hover:text-ink">
-          <X className="h-4 w-4" />
-        </button>
-      </div>
-      <input
-        name="subject"
-        required
-        placeholder="Subject"
-        className="w-full rounded-lg border border-brand-blue/12 bg-panel px-3 py-2 text-sm text-ink outline-none focus:border-brand-sky"
-      />
-      <textarea
-        name="message"
-        required
-        rows={4}
-        placeholder="Write a message to send to everyone who has reviewed…"
-        className="w-full rounded-lg border border-brand-blue/12 bg-panel px-3 py-2 text-sm text-ink outline-none focus:border-brand-sky"
-      />
-      <SubmitButton savingLabel="Sending…" savedLabel="Sent to all">
-        <Mail className="h-4 w-4" /> Send to all reviewers
-      </SubmitButton>
-    </form>
+      <Modal open={open} onClose={() => setOpen(false)} title={`Email all reviewers (${count})`}>
+        <p className="mb-4 text-sm text-muted">This message is sent to every customer who has left a review.</p>
+        <form action={action} className="space-y-3">
+          <input name="subject" required placeholder="Subject" className={field} />
+          <textarea name="message" required rows={6} placeholder="Write a message to send to everyone who has reviewed…" className={field} />
+          <div className="flex items-center justify-end gap-2 pt-1">
+            <button type="button" onClick={() => setOpen(false)} className="rounded-full px-4 py-2 text-sm font-medium text-muted hover:text-ink">
+              Cancel
+            </button>
+            <SubmitButton size="md" savingLabel="Sending…" savedLabel="Sent to all">
+              <Mail className="h-4 w-4" /> Send to all
+            </SubmitButton>
+          </div>
+        </form>
+      </Modal>
+    </>
   );
 }

@@ -4,7 +4,7 @@ import { AdminPasswordForm } from "@/components/admin/AdminPasswordForm";
 import { prisma } from "@/lib/db";
 import { getSetting, getFreightCents } from "@/lib/settings";
 import { formatCents } from "@/lib/money";
-import { saveSettingsAction, addTaxRateAction, deleteTaxRateAction } from "../actions";
+import { saveSettingsAction, addTaxRateAction, deleteTaxRateAction } from "@/app/admin/actions";
 
 export const dynamic = "force-dynamic";
 
@@ -20,7 +20,7 @@ export default async function AdminSettings() {
   ]);
 
   return (
-    <div className="space-y-8">
+    <div className="mx-auto w-full max-w-5xl space-y-8 px-1 sm:px-4">
       <div>
         <h1 className="font-sans text-2xl font-bold text-ink">Settings</h1>
         <p className="text-sm text-muted">Your account, freight, sales tax, and the ceiling-height recommendation logic.</p>

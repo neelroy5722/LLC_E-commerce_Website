@@ -10,7 +10,7 @@ import {
   deleteReviewAction,
   emailReviewerAction,
   emailAllReviewersAction,
-} from "../actions";
+} from "@/app/admin/actions";
 
 export const dynamic = "force-dynamic";
 
@@ -64,9 +64,9 @@ export default async function AdminReviews({ searchParams }: { searchParams: { s
       {reviews.length === 0 ? (
         <div className="card p-10 text-center text-muted">No reviews yet.</div>
       ) : (
-        <ul className="grid items-start gap-4 lg:grid-cols-2">
+        <ul className="grid items-start gap-4 md:grid-cols-2 xl:grid-cols-4">
           {reviews.map((r) => (
-            <li key={r.id} className="card p-5">
+            <li key={r.id} className="card flex flex-col p-5">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div className="min-w-0">
                   <div className="flex items-center gap-3">

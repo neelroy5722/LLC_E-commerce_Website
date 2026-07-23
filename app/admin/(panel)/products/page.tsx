@@ -11,7 +11,7 @@ import {
   updateCatalogLabelsAction,
   deleteSizeAction,
   addSizeAction,
-} from "../actions";
+} from "@/app/admin/actions";
 
 export const dynamic = "force-dynamic";
 
@@ -55,7 +55,7 @@ export default async function AdminProducts() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="mx-auto w-full max-w-5xl space-y-8 px-1 sm:px-4">
       <div>
         <h1 className="font-sans text-2xl font-bold text-ink">Product management</h1>
         <p className="text-sm text-muted">
@@ -64,8 +64,6 @@ export default async function AdminProducts() {
         </p>
       </div>
 
-      {/* Row 1 — three management sections side by side */}
-      <div className="grid items-start gap-6 xl:grid-cols-3">
       {/* Sizes & heights (editable + delete) */}
       <div className="card p-6">
         <form action={updateCatalogLabelsAction}>
@@ -268,9 +266,8 @@ export default async function AdminProducts() {
           </SubmitButton>
         </form>
       </div>
-      </div>
 
-      {/* Row 2 — product images, full width */}
+      {/* Product images */}
       <div className="card p-6">
         <h2 className="font-sans text-lg font-bold text-ink">Product images</h2>
         <p className="text-sm text-muted">

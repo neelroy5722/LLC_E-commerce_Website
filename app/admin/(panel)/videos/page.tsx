@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { Video as VideoIcon, Trash2, UploadCloud, Star } from "lucide-react";
 import { prisma } from "@/lib/db";
-import { deleteVideoAction, deletePhotoAction } from "../actions";
+import { deleteVideoAction, deletePhotoAction } from "@/app/admin/actions";
 import { VideoUploader } from "@/components/admin/VideoUploader";
 import { PhotoUploader } from "@/components/admin/PhotoUploader";
 import { SortSelect } from "@/components/admin/SortSelect";
@@ -24,13 +24,12 @@ export default async function AdminMedia({ searchParams }: { searchParams: { vso
   ]);
 
   return (
-    <div className="space-y-8">
+    <div className="mx-auto w-full max-w-5xl space-y-8 px-1 sm:px-4">
       <div>
         <h1 className="font-sans text-2xl font-bold text-ink">Videos &amp; Photos</h1>
         <p className="text-sm text-muted">Upload assembly videos and the first-screen photos shown on the homepage.</p>
       </div>
 
-      <div className="grid items-start gap-6 xl:grid-cols-2">
       {/* First-screen photos */}
       <div className="card p-6">
         <div className="flex items-center gap-2">
@@ -120,7 +119,6 @@ export default async function AdminMedia({ searchParams }: { searchParams: { vso
             ))}
           </ul>
         </div>
-      </div>
       </div>
     </div>
   );

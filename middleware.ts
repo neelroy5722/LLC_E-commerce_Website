@@ -4,30 +4,36 @@ import { getToken } from "next-auth/jwt";
 
 /**
  * Visitors can browse freely: the marketing pages, the product page, the
- * configurator, and the cart are all open — no account needed to look around
- * or price a build (the cart lives in localStorage). Signing in is only
- * required to actually check out, or to reach an account/admin area.
+ * configurator, and the cart are all open. Signing in is only required to
+ * check out or to reach an account/admin area. The admin area has its own
+ * dedicated sign-in page (/admin/login), which is itself public.
  */
 const PROTECTED = ["/checkout", "/account", "/admin"];
 
 export async function middleware(req: NextRequest) {
   const { pathname, search } = req.nextUrl;
+
+  // The admin sign-in page must stay public (it lives under /admin).
+  if (pathname === "/admin/login") return NextResponse.next();
+
   const needsAuth = PROTECTED.some((p) => pathname === p || pathname.startsWith(`${p}/`));
   if (!needsAuth) return NextResponse.next();
 
+  const isAdminRoute = pathname === "/admin" || pathname.startsWith("/admin/");
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+
   if (!token) {
     const url = req.nextUrl.clone();
-    url.pathname = "/login";
+    url.pathname = isAdminRoute ? "/admin/login" : "/login";
     url.search = "";
     url.searchParams.set("callbackUrl", `${pathname}${search}`);
     return NextResponse.redirect(url);
   }
 
   // The admin area additionally requires the admin role.
-  if ((pathname === "/admin" || pathname.startsWith("/admin/")) && token.role !== "admin") {
+  if (isAdminRoute && token.role !== "admin") {
     const url = req.nextUrl.clone();
-    url.pathname = "/account";
+    url.pathname = "/admin/login";
     url.search = "";
     return NextResponse.redirect(url);
   }
