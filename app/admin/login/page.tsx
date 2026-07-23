@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { signIn, signOut } from "next-auth/react";
 import { AdminAuthShell } from "@/components/admin/AdminAuthShell";
 import { Button } from "@/components/ui/Button";
@@ -67,12 +66,6 @@ export default function AdminLoginPage() {
           <ShieldCheck className="h-4 w-4" /> {loading ? "Signing in…" : "Sign in"}
         </Button>
       </form>
-      <p className="mt-5 text-center text-sm text-muted">
-        Need an admin account?{" "}
-        <Link href="/admin/register" className="font-medium text-brand-red-300 hover:underline">
-          Register
-        </Link>
-      </p>
     </AdminAuthShell>
   );
 }

@@ -6,15 +6,16 @@ import { getToken } from "next-auth/jwt";
  * Visitors can browse freely: the marketing pages, the product page, the
  * configurator, and the cart are all open. Signing in is only required to
  * check out or to reach an account/admin area. The admin area has its own
- * dedicated sign-in page (/admin/login), which is itself public.
+ * dedicated sign-in page (/admin/login), which is itself public. There is no
+ * admin self-registration — admins are provisioned directly in the database.
  */
 const PROTECTED = ["/checkout", "/account", "/admin"];
 
 export async function middleware(req: NextRequest) {
   const { pathname, search } = req.nextUrl;
 
-  // The admin sign-in and registration pages must stay public (both under /admin).
-  if (pathname === "/admin/login" || pathname === "/admin/register") return NextResponse.next();
+  // The admin sign-in page must stay public (it lives under /admin).
+  if (pathname === "/admin/login") return NextResponse.next();
 
   const needsAuth = PROTECTED.some((p) => pathname === p || pathname.startsWith(`${p}/`));
   if (!needsAuth) return NextResponse.next();
