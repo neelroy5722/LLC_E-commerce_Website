@@ -13,7 +13,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const unread = await prisma.notification.count({ where: { readAt: null } });
 
   return (
-    <div className="min-h-screen bg-night2">
+    <div className="admin-scope min-h-screen bg-night2">
       {/* Fixed full-height sidebar (desktop) */}
       <aside className="hidden lg:fixed lg:inset-y-0 lg:left-0 lg:z-40 lg:flex lg:w-60 lg:flex-col border-r border-brand-blue/10 bg-white">
         <Link href="/admin" className="flex h-16 items-center gap-2 border-b border-brand-blue/[0.08] px-5">
@@ -61,7 +61,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           <DashboardNav variant="admin" />
         </div>
 
-        <main className="p-4 sm:p-6 lg:p-8">{children}</main>
+        <main className="p-4 sm:p-6 lg:p-7">{children}</main>
       </div>
     </div>
   );

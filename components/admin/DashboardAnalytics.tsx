@@ -113,16 +113,18 @@ interface Kpi { icon: LucideIcon; label: string; value: string; tone: string }
 
 function KpiGrid({ items }: { items: Kpi[] }) {
   return (
-    <div className="grid gap-4 sm:grid-cols-3 xl:grid-cols-5">
+    <div className="grid gap-3 sm:grid-cols-3 xl:grid-cols-5">
       {items.map((k) => {
         const Icon = k.icon;
         return (
-          <div key={k.label} className="card p-5">
-            <span className={`inline-flex h-10 w-10 items-center justify-center rounded-xl ${TONES[k.tone]}`}>
-              <Icon className="h-5 w-5" />
+          <div key={k.label} className="card flex items-center gap-3 p-4">
+            <span className={`inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md ${TONES[k.tone]}`}>
+              <Icon className="h-4 w-4" />
             </span>
-            <p className="mt-3 text-xs font-medium uppercase tracking-wide text-muted">{k.label}</p>
-            <p className="mt-0.5 font-sans text-xl font-semibold tracking-tight text-ink">{k.value}</p>
+            <div className="min-w-0">
+              <p className="truncate text-[0.68rem] font-semibold uppercase tracking-wide text-muted">{k.label}</p>
+              <p className="truncate font-sans text-lg font-semibold tracking-tight text-ink">{k.value}</p>
+            </div>
           </div>
         );
       })}
@@ -238,7 +240,7 @@ export function DashboardAnalytics({ data }: { data: DashboardData }) {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       {/* Header + date-range selector */}
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
@@ -281,8 +283,8 @@ export function DashboardAnalytics({ data }: { data: DashboardData }) {
       <KpiGrid items={topKpis} />
 
       {/* Chart + product breakdown */}
-      <div className="grid gap-6 lg:grid-cols-[2fr_1fr]">
-        <div className="card p-5 sm:p-6">
+      <div className="grid gap-4 lg:grid-cols-[2fr_1fr]">
+        <div className="card p-4 sm:p-5">
           <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
             <div>
               <p className="text-xs font-medium uppercase tracking-wide text-muted">Revenue · selected range</p>
@@ -355,28 +357,28 @@ export function DashboardAnalytics({ data }: { data: DashboardData }) {
         </div>
 
         <div className="card flex flex-col overflow-hidden">
-          <div className="border-b border-brand-blue/[0.08] px-5 py-4">
-            <h2 className="font-sans text-base font-semibold tracking-tight text-ink">Products sold</h2>
+          <div className="border-b border-brand-blue/[0.08] px-4 py-3">
+            <h2 className="font-sans text-sm font-semibold tracking-tight text-ink">Products sold</h2>
             <p className="text-xs text-muted">By size · selected range</p>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-brand-blue/[0.08] text-left text-xs uppercase tracking-wide text-muted">
-                  <th className="px-5 py-2.5 font-medium">Product</th>
-                  <th className="px-5 py-2.5 text-right font-medium">Amount</th>
-                  <th className="px-5 py-2.5 text-right font-medium">Percent</th>
+                <tr className="border-b border-brand-blue/[0.08] text-left text-[0.68rem] uppercase tracking-wide text-muted">
+                  <th className="px-4 py-2 font-medium">Product</th>
+                  <th className="px-4 py-2 text-right font-medium">Amount</th>
+                  <th className="px-4 py-2 text-right font-medium">Percent</th>
                 </tr>
               </thead>
               <tbody>
                 {view.products.every((p) => p.units === 0) ? (
-                  <tr><td colSpan={3} className="px-5 py-8 text-center text-muted">No sales in this range.</td></tr>
+                  <tr><td colSpan={3} className="px-4 py-8 text-center text-muted">No sales in this range.</td></tr>
                 ) : (
                   view.products.map((p) => (
                     <tr key={p.label} className="border-b border-brand-blue/[0.06] last:border-0">
-                      <td className="px-5 py-3 font-medium text-ink">{p.label}</td>
-                      <td className="px-5 py-3 text-right text-ink">{p.units}</td>
-                      <td className="px-5 py-3 text-right text-muted">{p.pct}%</td>
+                      <td className="px-4 py-2.5 font-medium text-ink">{p.label}</td>
+                      <td className="px-4 py-2.5 text-right text-ink">{p.units}</td>
+                      <td className="px-4 py-2.5 text-right text-muted">{p.pct}%</td>
                     </tr>
                   ))
                 )}

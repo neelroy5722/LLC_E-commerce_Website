@@ -22,6 +22,12 @@
   .card {
     @apply rounded-2xl border border-brand-blue/[0.07] bg-white shadow-card;
   }
+  /* Admin panel: flat, compact surfaces — smaller radius, hairline border,
+     no drop shadow — for a more professional dashboard feel. Scoped so the
+     storefront keeps its softer marketing look. */
+  .admin-scope .card {
+    @apply rounded-lg border-brand-blue/[0.12] shadow-none;
+  }
   .card-glass {
     @apply rounded-2xl border border-brand-blue/10 bg-white/70 shadow-soft backdrop-blur-xl;
   }
