@@ -220,7 +220,7 @@ export default async function AdminProducts() {
               <li key={w.id} className="flex flex-wrap items-center gap-3 py-3">
                 <span className="h-8 w-8 shrink-0 rounded-full ring-1 ring-brand-blue/15" style={{ backgroundColor: w.swatch }} />
                 <input name={`wood_label_${w.id}`} defaultValue={w.label}
-                  className="w-40 rounded-lg border border-brand-blue/12 bg-panel px-3 py-1.5 text-sm font-medium text-ink outline-none focus:border-brand-sky" />
+                  className="min-w-[14rem] flex-1 rounded-lg border border-brand-blue/12 bg-panel px-3 py-1.5 text-sm font-medium text-ink outline-none focus:border-brand-sky" />
                 <div className="ml-auto flex items-center gap-4 text-sm">
                   <label className="flex items-center gap-1.5 text-muted">
                     +$

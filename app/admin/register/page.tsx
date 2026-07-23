@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { AdminAuthShell } from "@/components/admin/AdminAuthShell";
 import { Button } from "@/components/ui/Button";
@@ -50,11 +49,11 @@ export default function AdminRegisterPage() {
 
   return (
     <AdminAuthShell heading="WELCOME ABOARD" sub="Create your admin">
-      <div className="mb-6">
+      <div className="mb-6 text-center">
         <h2 className="font-sans text-2xl font-bold text-ink">Register admin</h2>
         <p className="mt-1 text-sm text-muted">Create an administrator account for the store.</p>
       </div>
-      <form onSubmit={onSubmit} className="space-y-4">
+      <form onSubmit={onSubmit} className="space-y-4 text-center">
         {error && (
           <div className="flex items-start gap-2 rounded-xl bg-brand-red/15 p-3 text-sm text-brand-red-700">
             <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
@@ -82,12 +81,6 @@ export default function AdminRegisterPage() {
           <ShieldCheck className="h-4 w-4" /> {loading ? "Creating…" : "Create admin account"}
         </Button>
       </form>
-      <p className="mt-5 text-center text-sm text-muted">
-        Already have an admin account?{" "}
-        <Link href="/admin/login" className="font-medium text-brand-red-300 hover:underline">
-          Sign in
-        </Link>
-      </p>
     </AdminAuthShell>
   );
 }

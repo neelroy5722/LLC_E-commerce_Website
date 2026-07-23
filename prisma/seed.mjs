@@ -190,11 +190,39 @@ async function main() {
     },
   });
 
-  // Sample orders for John (money in cents). TX rate 6.25%, freight $450.
+  // Extra sample customers so "total users" and "returning rate" are meaningful.
+  // The first `LOYAL_COUNT` (incl. John) get repeat orders below; the rest get a
+  // single order, yielding a realistic returning-customer rate (~50%).
+  const FIRST = ["Maria", "David", "Sarah", "James", "Emily", "Michael", "Olivia", "Daniel", "Sophia", "Ethan", "Ava", "Liam", "Isabella", "Noah", "Mia", "Lucas", "Charlotte", "Mason", "Amelia", "Henry"];
+  const LAST = ["Lopez", "Kim", "Jones", "Brown", "Davis", "Wilson", "Martin", "Garcia", "Miller", "Moore", "Taylor", "Anderson", "Thomas", "Jackson", "White", "Harris", "Clark", "Lewis", "Young", "Walker"];
+  const CUST_STATES = ["CA", "NY", "FL", "IL", "WA", "PA", "GA", "MA", "TX", "SC"];
+  const extraCustomers = [];
+  for (let i = 0; i < FIRST.length; i++) {
+    extraCustomers.push(
+      await prisma.user.create({
+        data: {
+          email: `${FIRST[i].toLowerCase()}.${LAST[i].toLowerCase()}@example.com`,
+          passwordHash: custPass,
+          name: `${FIRST[i]} ${LAST[i]}`,
+          role: "customer",
+          emailVerifiedAt: new Date(),
+          phone: "(555) 010-0000",
+          addressLine1: `${100 + i} Main Street`,
+          city: "Springfield",
+          state: CUST_STATES[i % CUST_STATES.length],
+          zip: "10000",
+        },
+      })
+    );
+  }
+  const allCustomers = [john, ...extraCustomers];
+  const LOYAL_COUNT = 11; // customers who receive repeat orders
+
+  // Sample orders (money in cents). Freight $450.
   const freight = 45000;
   // `lines` is an array of { sizeKey, heightKey, woodKey, baseDollars, deltaDollars, quantity }.
   // `createdAt` (optional) back-dates the order so the reports chart has history.
-  function buildOrder(num, lines, statusIndex, createdAt) {
+  function buildOrder(num, lines, statusIndex, createdAt, user = john) {
     const items = lines.map((l) => {
       const unit = (l.baseDollars + l.deltaDollars) * 100;
       return {
@@ -211,20 +239,24 @@ async function main() {
     const subtotal = items.reduce((a, it) => a + it.unitPrice * it.quantity, 0);
     const tax = Math.round(subtotal * 0.0625);
     const total = subtotal + tax + freight;
+    // Each status step lands ~2 days after the previous (clamped to now) so the
+    // dashboard's "processing time" reflects a realistic day count.
+    const base = createdAt ? createdAt.getTime() : Date.now();
     const history = STATUSES.slice(0, statusIndex + 1).map((st, i) => ({
       status: st,
       note: i === 0 ? "Order placed and paid." : null,
+      createdAt: new Date(Math.min(Date.now(), base + i * 2 * 86_400_000)),
     }));
     return {
       orderNumber: num,
-      userId: john.id,
-      email: john.email,
-      customerName: john.name,
-      phone: john.phone,
-      shipLine1: john.addressLine1,
-      shipCity: john.city,
-      shipState: john.state,
-      shipZip: john.zip,
+      userId: user.id,
+      email: user.email,
+      customerName: user.name,
+      phone: user.phone,
+      shipLine1: user.addressLine1,
+      shipCity: user.city,
+      shipState: user.state,
+      shipZip: user.zip,
       subtotal,
       tax,
       freight,
@@ -254,7 +286,7 @@ async function main() {
   const now = new Date();
   let histNum = 2000;
   for (let m = 23; m >= 0; m--) {
-    const ordersThisMonth = 2 + (m % 2); // 2 or 3 orders
+    const ordersThisMonth = 9 + ((m * 5 + 3) % 6); // 9–14 orders spread across the month's days
     // For the current month, never schedule an order past today.
     const monthStart = new Date(now.getFullYear(), now.getMonth() - m, 1);
     const daysInMonth = new Date(monthStart.getFullYear(), monthStart.getMonth() + 1, 0).getDate();
@@ -291,10 +323,30 @@ async function main() {
         });
       }
       histNum += 1;
+      const buyer = allCustomers[(m + k) % LOYAL_COUNT]; // loyal customers get repeats
       await prisma.order.create({
-        data: buildOrder(`VM-${histNum}`, lines, 4, createdAt),
+        data: buildOrder(`VM-${histNum}`, lines, 4, createdAt, buyer),
       });
     }
+  }
+
+  // One order each for the remaining (one-time) customers.
+  for (let i = LOYAL_COUNT; i < allCustomers.length; i++) {
+    histNum += 1;
+    const monthsAgo = 1 + (i % 18);
+    const createdAt = new Date(now.getFullYear(), now.getMonth() - monthsAgo, 1 + (i % 26), 10, 0, 0);
+    const sizeKey = pick(SIZES_K, i);
+    const heightKey = pick(HEIGHTS_K, i + 1);
+    const woodKey = pick(WOODS_K, i);
+    await prisma.order.create({
+      data: buildOrder(
+        `VM-${histNum}`,
+        [{ sizeKey, heightKey, woodKey, baseDollars: BASE[sizeKey][heightKey], deltaDollars: WOOD_DELTA[woodKey], quantity: 1 }],
+        4,
+        createdAt,
+        allCustomers[i]
+      ),
+    });
   }
 
   await prisma.order.create({

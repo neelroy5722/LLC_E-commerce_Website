@@ -1,4 +1,3 @@
-import { DollarSign, CalendarRange, Clock, CheckCircle2, Crown } from "lucide-react";
 import { DashboardAnalytics, type PeriodData, type Periods } from "@/components/admin/DashboardAnalytics";
 import { prisma } from "@/lib/db";
 import { formatCents } from "@/lib/money";
@@ -24,7 +23,7 @@ export default async function AdminDashboard() {
   const thisYearStart = new Date(y, 0, 1);
   const lastYearStart = new Date(y - 1, 0, 1);
 
-  const [sizes, orders, activeCount, doneCount] = await Promise.all([
+  const [sizes, orders, activeCount, doneCount, totalUsers, orderGroups, deliveredHist] = await Promise.all([
     prisma.size.findMany({ orderBy: { sortOrder: "asc" } }),
     prisma.order.findMany({
       where: { paymentStatus: "paid", createdAt: { gte: lastYearStart } },
@@ -32,6 +31,12 @@ export default async function AdminDashboard() {
     }),
     prisma.order.count({ where: { status: { not: "delivered" } } }),
     prisma.order.count({ where: { status: "delivered" } }),
+    prisma.user.count(),
+    prisma.order.groupBy({ by: ["userId"], where: { userId: { not: null } }, _count: { _all: true } }),
+    prisma.orderStatusHistory.findMany({
+      where: { status: "delivered" },
+      select: { createdAt: true, order: { select: { createdAt: true } } },
+    }),
   ]);
 
   const sizeLabel = new Map(sizes.map((s) => [s.key, s.label]));
@@ -116,7 +121,10 @@ export default async function AdminDashboard() {
   };
 
   const todaySales = orders.filter((o) => o.createdAt >= startOfToday).reduce((a, o) => a + o.total, 0);
+  const todayOrders = orders.filter((o) => o.createdAt >= startOfToday).length;
   const monthRevenue = orders.filter((o) => o.createdAt >= thisMonthStart).reduce((a, o) => a + o.total, 0);
+  const paidRevenue = orders.reduce((a, o) => a + o.total, 0);
+  const avgOrderValue = orders.length ? Math.round(paidRevenue / orders.length) : 0;
 
   const unitsBySize = new Map<string, number>();
   for (const o of orders) for (const it of o.items) unitsBySize.set(it.sizeKey, (unitsBySize.get(it.sizeKey) ?? 0) + it.quantity);
@@ -130,49 +138,31 @@ export default async function AdminDashboard() {
     }
   }
 
-  return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="font-sans text-2xl font-bold text-ink">Dashboard</h1>
-        <p className="text-sm text-muted">Revenue trends and product sales — switch the period on the right of the chart.</p>
-      </div>
+  // Average order processing time (order placed → delivered), in days.
+  const procDiffs = deliveredHist
+    .map((h) => (h.createdAt.getTime() - h.order.createdAt.getTime()) / DAY)
+    .filter((v) => v >= 0 && v <= 120);
+  const processingDays = procDiffs.length
+    ? `${(procDiffs.reduce((a, b) => a + b, 0) / procDiffs.length).toFixed(1)} days`
+    : "—";
 
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
-        <Stat icon={DollarSign} label="Daily revenue" value={formatCents(todaySales)} tone="red" />
-        <Stat icon={CalendarRange} label="Monthly revenue" value={formatCents(monthRevenue)} tone="red" />
-        <Stat icon={Clock} label="Active orders" value={String(activeCount)} tone="blue" />
-        <Stat icon={CheckCircle2} label="Completed orders" value={String(doneCount)} tone="green" />
-        <Stat icon={Crown} label="Best-selling product" value={bestSeller} tone="blue" />
-      </div>
+  // Returning-customer rate: customers with 2+ orders / customers with any order.
+  const customersWithOrders = orderGroups.length;
+  const returningCustomers = orderGroups.filter((g) => g._count._all >= 2).length;
+  const returningRate = customersWithOrders ? Math.round((returningCustomers / customersWithOrders) * 100) : 0;
 
-      <DashboardAnalytics periods={periods} />
-    </div>
-  );
-}
-
-function Stat({
-  icon: Icon,
-  label,
-  value,
-  tone,
-}: {
-  icon: React.ComponentType<{ className?: string }>;
-  label: string;
-  value: string;
-  tone: "red" | "blue" | "green";
-}) {
-  const tones = {
-    red: "bg-brand-red/15 text-brand-red-700",
-    blue: "bg-brand-sky/15 text-brand-sky",
-    green: "bg-emerald-400/15 text-emerald-700",
+  const metrics = {
+    dailyRevenue: formatCents(todaySales),
+    monthlyRevenue: formatCents(monthRevenue),
+    todayOrders,
+    avgOrderValue: formatCents(avgOrderValue),
+    processingDays,
+    activeOrders: activeCount,
+    completedOrders: doneCount,
+    totalUsers,
+    returningRate,
+    bestSeller,
   };
-  return (
-    <div className="card p-5">
-      <span className={`inline-flex h-10 w-10 items-center justify-center rounded-xl ${tones[tone]}`}>
-        <Icon className="h-5 w-5" />
-      </span>
-      <p className="mt-3 text-sm text-muted">{label}</p>
-      <p className="font-sans text-2xl font-bold text-ink">{value}</p>
-    </div>
-  );
+
+  return <DashboardAnalytics metrics={metrics} periods={periods} />;
 }

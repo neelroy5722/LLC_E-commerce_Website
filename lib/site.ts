@@ -7,7 +7,7 @@ export const SITE = {
   domain: "apartmentloftbed.com",
   tagline: "Five pieces of furniture in one unit. Zero wasted space.",
   patent: "U.S. Patent #11,553,800",
-  email: "apt.bed@apartmentloftbed.com",
+  email: "sales@apartmentloftbed.com",
   phone: "330-383-0712",
   origin: "Built in South Carolina, USA",
   originShort: "South Carolina, USA",
