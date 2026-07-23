@@ -34,7 +34,7 @@ export function AdminAuthShell({
           <LogoMark className="h-8 w-8" inverse />
           <span className="font-sans font-semibold tracking-wide">VICTORY MARTIN</span>
         </div>
-        <div className="relative z-10 text-center">
+        <div className="relative z-10 mx-auto flex max-w-md flex-col items-center text-center">
           <p className="text-xs font-medium uppercase tracking-[0.35em] text-white/70">{sub}</p>
           <h1 className="mt-3 font-sans text-5xl font-black leading-[1.05]">{heading}</h1>
           <p className="mt-5 max-w-sm text-sm leading-relaxed text-white/70">

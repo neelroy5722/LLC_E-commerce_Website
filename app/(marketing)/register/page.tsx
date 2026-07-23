@@ -2,19 +2,20 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { LogoMark } from "@/components/brand/Logo";
 import { Button } from "@/components/ui/Button";
 import { PasswordInput } from "@/components/ui/PasswordInput";
-import { AlertCircle, MailCheck } from "lucide-react";
+import { AlertCircle } from "lucide-react";
 
 export default function RegisterPage() {
+  const router = useRouter();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [registered, setRegistered] = useState(false);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -39,34 +40,10 @@ export default function RegisterPage() {
       setLoading(false);
       return;
     }
-    // Account created but unverified — the user must confirm their email before
-    // they can sign in, so show the "check your email" screen instead.
-    setLoading(false);
-    setRegistered(true);
-  }
-
-  if (registered) {
-    return (
-      <section className="container flex min-h-[70vh] items-center py-16">
-        <div className="mx-auto w-full max-w-md">
-          <div className="card space-y-3 p-6 text-center sm:p-7">
-            <MailCheck className="mx-auto h-8 w-8 text-brand-sky" />
-            <h1 className="font-display text-2xl font-bold text-ink">Confirm your email</h1>
-            <p className="text-sm text-muted">
-              We&apos;ve sent a verification link to <span className="font-medium text-ink">{email}</span>. Open it to
-              activate your account, then sign in. The link expires in 24 hours.
-            </p>
-            <p className="text-xs text-muted">
-              Didn&apos;t get it? Check your spam folder, or{" "}
-              <Link href="/login" className="font-medium text-brand-red-300 hover:underline">
-                sign in
-              </Link>{" "}
-              to resend it.
-            </p>
-          </div>
-        </div>
-      </section>
-    );
+    // Account created as a regular customer, but unverified: the user must
+    // confirm their email before they can sign in. Send them to the homepage,
+    // where a banner reminds them to open the verification link.
+    router.push("/?check_email=1");
   }
 
   return (
