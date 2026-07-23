@@ -29,7 +29,7 @@ export default async function AdminSettings() {
       {/* Admin account password — its own concern, own button */}
       <AdminPasswordForm />
 
-      <div className="grid items-start gap-6 xl:grid-cols-2">
+      <div className="space-y-6">
         {/* Freight & tax mode */}
         <div className="card p-6">
           <h2 className="font-sans text-lg font-bold text-ink">Freight &amp; tax mode</h2>
@@ -79,8 +79,8 @@ export default async function AdminSettings() {
           </div>
         </div>
 
-        {/* State tax rates — full width */}
-        <div className="card p-6 xl:col-span-2">
+        {/* State tax rates */}
+        <div className="card p-6">
           <h2 className="font-sans text-lg font-bold text-ink">State tax rates</h2>
           <p className="text-sm text-muted">Editable rates applied by shipping state at checkout.</p>
 

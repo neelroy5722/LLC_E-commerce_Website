@@ -13,8 +13,8 @@ const PROTECTED = ["/checkout", "/account", "/admin"];
 export async function middleware(req: NextRequest) {
   const { pathname, search } = req.nextUrl;
 
-  // The admin sign-in page must stay public (it lives under /admin).
-  if (pathname === "/admin/login") return NextResponse.next();
+  // The admin sign-in and registration pages must stay public (both under /admin).
+  if (pathname === "/admin/login" || pathname === "/admin/register") return NextResponse.next();
 
   const needsAuth = PROTECTED.some((p) => pathname === p || pathname.startsWith(`${p}/`));
   if (!needsAuth) return NextResponse.next();

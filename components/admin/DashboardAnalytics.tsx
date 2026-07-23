@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { formatCents } from "@/lib/money";
 
 export interface PeriodData {
@@ -43,19 +43,22 @@ function smoothPath(pts: { x: number; y: number }[]): string {
   return d;
 }
 
+const W = 720;
+const H = 280;
+const padL = 52;
+const padR = 16;
+const padT = 16;
+const padB = 28;
+const chartW = W - padL - padR;
+const chartH = H - padT - padB;
+
 export function DashboardAnalytics({ periods }: { periods: Periods }) {
   const [key, setKey] = useState<Key>("week");
+  const [hover, setHover] = useState<number | null>(null);
+  const svgRef = useRef<SVGSVGElement>(null);
+
   const opt = OPTIONS.find((o) => o.key === key)!;
   const d = periods[key];
-
-  const W = 720;
-  const H = 280;
-  const padL = 52;
-  const padR = 16;
-  const padT = 16;
-  const padB = 28;
-  const chartW = W - padL - padR;
-  const chartH = H - padT - padB;
   const n = d.labels.length;
   const max = Math.max(1, ...d.current, ...d.previous);
   const x = (i: number) => padL + (n <= 1 ? chartW / 2 : (chartW * i) / (n - 1));
@@ -67,6 +70,14 @@ export function DashboardAnalytics({ periods }: { periods: Periods }) {
   const prevPath = smoothPath(pts(d.previous));
   const ticks = [0, 0.25, 0.5, 0.75, 1].map((f) => ({ f, v: max * f, yy: padT + chartH * (1 - f) }));
   const delta = d.previousTotal > 0 ? Math.round(((d.currentTotal - d.previousTotal) / d.previousTotal) * 100) : null;
+
+  const onMove = (e: React.MouseEvent<SVGSVGElement>) => {
+    const rect = svgRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    const svgX = ((e.clientX - rect.left) / rect.width) * W;
+    const i = Math.round((svgX - padL) / (chartW / Math.max(1, n - 1)));
+    setHover(i >= 0 && i < n ? i : null);
+  };
 
   return (
     <div className="grid gap-6 lg:grid-cols-[2fr_1fr]">
@@ -94,7 +105,10 @@ export function DashboardAnalytics({ periods }: { periods: Periods }) {
           {/* Week / Month / Year dropdown */}
           <select
             value={key}
-            onChange={(e) => setKey(e.target.value as Key)}
+            onChange={(e) => {
+              setKey(e.target.value as Key);
+              setHover(null);
+            }}
             className="rounded-lg border border-brand-blue/12 bg-panel px-3 py-1.5 text-sm font-medium text-ink outline-none focus:border-brand-sky"
           >
             {OPTIONS.map((o) => (
@@ -103,8 +117,16 @@ export function DashboardAnalytics({ periods }: { periods: Periods }) {
           </select>
         </div>
 
-        <div className="mt-4">
-          <svg viewBox={`0 0 ${W} ${H}`} className="w-full" role="img" aria-label={`Revenue ${opt.cur} vs ${opt.prev}`}>
+        <div className="relative mt-4">
+          <svg
+            ref={svgRef}
+            viewBox={`0 0 ${W} ${H}`}
+            className="w-full"
+            role="img"
+            aria-label={`Revenue ${opt.cur} vs ${opt.prev}`}
+            onMouseMove={onMove}
+            onMouseLeave={() => setHover(null)}
+          >
             <defs>
               <linearGradient id="cur-fill" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor="#E85A4F" stopOpacity="0.20" />
@@ -116,13 +138,18 @@ export function DashboardAnalytics({ periods }: { periods: Periods }) {
               </linearGradient>
             </defs>
 
+            {/* Horizontal gridlines + $ labels */}
             {ticks.map((t) => (
-              <g key={t.f}>
-                <line x1={padL} y1={t.yy} x2={W - padR} y2={t.yy} stroke="#1B3454" strokeOpacity="0.08" />
+              <g key={`h-${t.f}`}>
+                <line x1={padL} y1={t.yy} x2={W - padR} y2={t.yy} stroke="#1B3454" strokeOpacity="0.12" />
                 <text x={padL - 8} y={t.yy + 3} textAnchor="end" className="fill-current text-[10px] text-muted">
                   ${Math.round(t.v / 100)}
                 </text>
               </g>
+            ))}
+            {/* Vertical gridlines */}
+            {d.labels.map((_, i) => (
+              <line key={`v-${i}`} x1={x(i)} y1={padT} x2={x(i)} y2={padT + chartH} stroke="#1B3454" strokeOpacity="0.07" />
             ))}
 
             <path d={areaFrom(prevPath)} fill="url(#prev-fill)" />
@@ -130,12 +157,36 @@ export function DashboardAnalytics({ periods }: { periods: Periods }) {
             <path d={areaFrom(curPath)} fill="url(#cur-fill)" />
             <path d={curPath} fill="none" stroke="#E85A4F" strokeWidth="2.5" strokeLinecap="round" />
 
+            {/* Hover indicator */}
+            {hover !== null && (
+              <g>
+                <line x1={x(hover)} y1={padT} x2={x(hover)} y2={padT + chartH} stroke="#1B3454" strokeOpacity="0.25" />
+                <circle cx={x(hover)} cy={y(d.previous[hover])} r="4" fill="#6E9CC4" stroke="#fff" strokeWidth="1.5" />
+                <circle cx={x(hover)} cy={y(d.current[hover])} r="4" fill="#E85A4F" stroke="#fff" strokeWidth="1.5" />
+              </g>
+            )}
+
             {d.labels.map((lab, i) => (
               <text key={`${lab}-${i}`} x={x(i)} y={H - 8} textAnchor="middle" className="fill-current text-[10px] text-muted">
                 {lab}
               </text>
             ))}
           </svg>
+
+          {/* Tooltip */}
+          {hover !== null && (
+            <div
+              className="pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-[calc(100%+8px)] whitespace-nowrap rounded-lg bg-brand-blue-900 px-2.5 py-1.5 text-xs text-white shadow-lift"
+              style={{
+                left: `${(x(hover) / W) * 100}%`,
+                top: `${(Math.min(y(d.current[hover]), y(d.previous[hover])) / H) * 100}%`,
+              }}
+            >
+              <div className="mb-0.5 font-semibold">{d.labels[hover]}</div>
+              <div className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-brand-red" />{opt.cur}: {formatCents(d.current[hover])}</div>
+              <div className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-brand-sky" />{opt.prev}: {formatCents(d.previous[hover])}</div>
+            </div>
+          )}
         </div>
       </div>
 

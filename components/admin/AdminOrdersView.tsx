@@ -90,7 +90,7 @@ export function AdminOrdersView({ orders }: { orders: AdminOrderRow[] }) {
       return (
         <Fragment key={o.id}>
           <tr className="border-b border-brand-blue/[0.06]">
-            <td className="truncate px-6 py-3.5 font-medium text-ink">{o.orderNumber}</td>
+            <td className="whitespace-nowrap px-6 py-3.5 font-medium text-ink">{o.orderNumber}</td>
             <td className="truncate px-6 py-3.5 text-ink/90">{o.customerName}</td>
             <td className="truncate px-6 py-3.5 text-ink/80" title={products}>{products}</td>
             <td className="truncate px-6 py-3.5 text-muted">{o.date}</td>
@@ -169,15 +169,15 @@ export function AdminOrdersView({ orders }: { orders: AdminOrderRow[] }) {
       {/* One table for both sections → columns always align. */}
       <div className="card overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[46rem] table-fixed text-sm">
+          <table className="w-full min-w-[52rem] table-fixed text-sm">
             <colgroup>
-              <col className="w-24" />
-              <col className="w-44" />
-              <col />
-              <col className="w-28" />
-              <col className="w-28" />
-              <col className="w-36" />
-              <col className="w-24" />
+              <col style={{ width: "7rem" }} />
+              <col style={{ width: "13rem" }} />
+              <col style={{ width: "16rem" }} />
+              <col style={{ width: "8rem" }} />
+              <col style={{ width: "8rem" }} />
+              <col style={{ width: "10rem" }} />
+              <col style={{ width: "7rem" }} />
             </colgroup>
             <thead>
               <tr className="border-b border-brand-blue/[0.08] bg-brand-blue/[0.02] text-left text-xs uppercase tracking-wide text-muted">

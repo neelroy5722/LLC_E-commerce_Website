@@ -134,14 +134,15 @@ export async function sendNewOrderAdminAlert(data: {
 /** Sends an admin-authored message to a customer (used from the reviews screen). */
 export async function sendAdminMessage(data: {
   to: string;
-  customerName: string;
+  customerName?: string;
   subject: string;
   message: string;
 }): Promise<void> {
-  const text = [`Hi ${data.customerName},`, ``, data.message, ``, `— Victory Martin`].join("\n");
+  const greeting = data.customerName ? `Hi ${data.customerName},` : "Hello,";
+  const text = [greeting, ``, data.message, ``, `— Victory Martin`].join("\n");
 
   const html = `<div style="font-family:Helvetica,Arial,sans-serif;max-width:560px">
-    <p style="color:#0C1826">Hi ${escapeHtml(data.customerName)},</p>
+    <p style="color:#0C1826">${escapeHtml(greeting)}</p>
     <div style="color:#374151;line-height:1.6;white-space:pre-wrap">${escapeHtml(data.message)}</div>
     <p style="color:#6b7280;font-size:13px;margin-top:20px">— Victory Martin · apartmentloftbed.com</p>
   </div>`;

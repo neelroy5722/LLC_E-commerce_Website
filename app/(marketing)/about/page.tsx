@@ -24,7 +24,7 @@ const SPECS = [
 
 export default async function AboutPage() {
   const reviews = await prisma.review.findMany({
-    where: { status: "approved", featured: true },
+    where: { status: "approved" },
     orderBy: { createdAt: "desc" },
     take: 6,
   });

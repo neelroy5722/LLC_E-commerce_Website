@@ -1,4 +1,4 @@
-import { DollarSign, Clock, CheckCircle2 } from "lucide-react";
+import { DollarSign, CalendarRange, Clock, CheckCircle2, Crown } from "lucide-react";
 import { DashboardAnalytics, type PeriodData, type Periods } from "@/components/admin/DashboardAnalytics";
 import { prisma } from "@/lib/db";
 import { formatCents } from "@/lib/money";
@@ -116,6 +116,19 @@ export default async function AdminDashboard() {
   };
 
   const todaySales = orders.filter((o) => o.createdAt >= startOfToday).reduce((a, o) => a + o.total, 0);
+  const monthRevenue = orders.filter((o) => o.createdAt >= thisMonthStart).reduce((a, o) => a + o.total, 0);
+
+  const unitsBySize = new Map<string, number>();
+  for (const o of orders) for (const it of o.items) unitsBySize.set(it.sizeKey, (unitsBySize.get(it.sizeKey) ?? 0) + it.quantity);
+  let bestSeller = "—";
+  let bestUnits = -1;
+  for (const s of sizes) {
+    const u = unitsBySize.get(s.key) ?? 0;
+    if (u > bestUnits) {
+      bestUnits = u;
+      bestSeller = s.label;
+    }
+  }
 
   return (
     <div className="space-y-6">
@@ -124,10 +137,12 @@ export default async function AdminDashboard() {
         <p className="text-sm text-muted">Revenue trends and product sales — switch the period on the right of the chart.</p>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-3">
-        <Stat icon={DollarSign} label="Today's sales" value={formatCents(todaySales)} tone="red" />
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+        <Stat icon={DollarSign} label="Daily revenue" value={formatCents(todaySales)} tone="red" />
+        <Stat icon={CalendarRange} label="Monthly revenue" value={formatCents(monthRevenue)} tone="red" />
         <Stat icon={Clock} label="Active orders" value={String(activeCount)} tone="blue" />
         <Stat icon={CheckCircle2} label="Completed orders" value={String(doneCount)} tone="green" />
+        <Stat icon={Crown} label="Best-selling product" value={bestSeller} tone="blue" />
       </div>
 
       <DashboardAnalytics periods={periods} />

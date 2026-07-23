@@ -177,7 +177,7 @@ async function main() {
   const custPass = await bcrypt.hash("password", 10);
   const john = await prisma.user.create({
     data: {
-      email: "john.r@email.com",
+      email: "andrejrospop@gmail.com",
       passwordHash: custPass,
       name: "John Rivera",
       role: "customer",
@@ -249,11 +249,11 @@ async function main() {
     return arr[n % arr.length];
   }
 
-  // Spread ~2–3 paid orders across each of the last 12 months so the reports
-  // chart shows product volume + revenue for every month and size.
+  // Spread ~2–3 paid orders across each of the last 24 months so the dashboard
+  // chart is populated for this year AND last year (year-over-year comparison).
   const now = new Date();
   let histNum = 2000;
-  for (let m = 11; m >= 0; m--) {
+  for (let m = 23; m >= 0; m--) {
     const ordersThisMonth = 2 + (m % 2); // 2 or 3 orders
     // For the current month, never schedule an order past today.
     const monthStart = new Date(now.getFullYear(), now.getMonth() - m, 1);
@@ -362,7 +362,7 @@ async function main() {
 
   console.log("Seed complete ✓");
   console.log("  Admin:    neelroy5722@gmail.com / admin1234");
-  console.log("  Customer: john.r@email.com / password");
+  console.log("  Customer: andrejrospop@gmail.com / password");
 }
 
 main()

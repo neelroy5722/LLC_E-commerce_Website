@@ -147,10 +147,10 @@ export default async function AdminProducts() {
           </SubmitButton>
         </div>
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[44rem] text-sm">
+          <table className="w-full min-w-[40rem] table-fixed text-sm">
             <thead>
               <tr className="border-b border-brand-blue/[0.08] bg-brand-blue/[0.02] text-left text-xs uppercase tracking-wide text-muted">
-                <th className="px-6 py-3 font-medium">Size</th>
+                <th className="w-1/3 px-6 py-3 font-medium">Size</th>
                 {heights.map((h) => (
                   <th key={h.id} className="px-6 py-3 text-right font-medium">{h.label}</th>
                 ))}

@@ -446,43 +446,14 @@ export async function deleteReviewAction(formData: FormData) {
   revalidateReviews();
 }
 
-/** Emails the customer who wrote a review (e.g. to reply or request photos). */
-export async function emailReviewerAction(formData: FormData) {
+/** Sends an admin-composed email to any recipient (from the reviews screen). */
+export async function sendComposedEmailAction(formData: FormData) {
   await assertAdmin();
-  const reviewId = String(formData.get("reviewId"));
+  const to = String(formData.get("to") || "").trim();
   const subject = String(formData.get("subject") || "").trim();
   const message = String(formData.get("message") || "").trim();
-  if (!subject || !message) return;
-
-  const review = await prisma.review.findUnique({
-    where: { id: reviewId },
-    include: { user: { select: { email: true, name: true } } },
-  });
-  const to = review?.user?.email;
-  if (!to) return; // only reviews tied to a registered customer can be emailed
-  await sendAdminMessage({ to, customerName: review?.user?.name ?? review?.authorName ?? "there", subject, message });
-  revalidatePath("/admin/reviews");
-}
-
-/** Emails every distinct customer who has left a review (with a registered email). */
-export async function emailAllReviewersAction(formData: FormData) {
-  await assertAdmin();
-  const subject = String(formData.get("subject") || "").trim();
-  const message = String(formData.get("message") || "").trim();
-  if (!subject || !message) return;
-
-  const reviews = await prisma.review.findMany({
-    where: { userId: { not: null } },
-    include: { user: { select: { email: true, name: true } } },
-  });
-  const seen = new Set<string>();
-  for (const r of reviews) {
-    const to = r.user?.email;
-    if (!to || seen.has(to)) continue;
-    seen.add(to);
-    // eslint-disable-next-line no-await-in-loop
-    await sendAdminMessage({ to, customerName: r.user?.name ?? r.authorName, subject, message });
-  }
+  if (!to || !subject || !message) return;
+  await sendAdminMessage({ to, subject, message });
   revalidatePath("/admin/reviews");
 }
 
